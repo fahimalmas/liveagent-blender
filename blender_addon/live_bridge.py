@@ -40,6 +40,8 @@ def get_scene_objects_data():
             color = [0.2, 0.6, 0.95]
             metalness = 0.5
             roughness = 0.3
+            transmission = 0.0
+            opacity = 1.0
             if obj.data.materials and len(obj.data.materials) > 0:
                 mat = obj.data.materials[0]
                 if mat and mat.use_nodes and mat.node_tree:
@@ -52,12 +54,28 @@ def get_scene_objects_data():
                             metalness = round(float(bsdf.inputs['Metallic'].default_value), 2)
                         if 'Roughness' in bsdf.inputs:
                             roughness = round(float(bsdf.inputs['Roughness'].default_value), 2)
+                        if 'Transmission Weight' in bsdf.inputs:
+                            transmission = round(float(bsdf.inputs['Transmission Weight'].default_value), 2)
+                        elif 'Transmission' in bsdf.inputs:
+                            transmission = round(float(bsdf.inputs['Transmission'].default_value), 2)
             
             dim = [round(float(d), 4) for d in obj.dimensions]
             loc = [round(float(l), 4) for l in obj.location]
             rot = [round(float(r), 4) for r in obj.rotation_euler]
             scale = [round(float(s), 4) for s in obj.scale]
             
+            # تحديد نوع الشكل الهندسي لتسهيل الرسم في المتصفح
+            shape_type = 'box'
+            obj_name_lower = obj.name.lower()
+            if 'torus' in obj_name_lower or 'ring' in obj_name_lower or 'rim' in obj_name_lower or 'frame' in obj_name_lower:
+                shape_type = 'torus'
+            elif 'cylinder' in obj_name_lower or 'lens' in obj_name_lower or 'stem' in obj_name_lower or 'glass' in obj_name_lower or 'tube' in obj_name_lower:
+                shape_type = 'cylinder'
+            elif 'sphere' in obj_name_lower or 'petal' in obj_name_lower or 'bulb' in obj_name_lower:
+                shape_type = 'sphere'
+            elif 'cone' in obj_name_lower:
+                shape_type = 'cone'
+
             objects_data.append({
                 "name": obj.name,
                 "location": loc,
@@ -66,7 +84,9 @@ def get_scene_objects_data():
                 "dimensions": dim,
                 "color": color,
                 "metalness": metalness,
-                "roughness": roughness
+                "roughness": roughness,
+                "transmission": transmission,
+                "shape": shape_type
             })
     except Exception as e:
         print(f"[LiveAgent Bridge] تنبيه أثناء قراءة الكائنات: {e}")

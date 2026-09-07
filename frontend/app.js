@@ -962,10 +962,25 @@ function renderFromBlenderScene(objects, promptTitle) {
         const color = obj.color || [0.3, 0.6, 0.9];
         const name = (obj.name || '').toLowerCase();
 
-        const mat = new THREE.MeshStandardMaterial({
+        // دعم الشفافية والانعكاس الزجاجي للعدسات والمزهريات
+        const isGlass = (obj.transmission && obj.transmission > 0.1) || 
+                        name.includes('lens') || name.includes('glass') || name.includes('water');
+        
+        const mat = new THREE.MeshPhysicalMaterial ? new THREE.MeshPhysicalMaterial({
+            color: new THREE.Color(color[0], color[1], color[2]),
+            metalness: obj.metalness || 0.3,
+            roughness: isGlass ? 0.05 : (obj.roughness || 0.25),
+            transmission: isGlass ? Math.max(obj.transmission || 0.6, 0.65) : 0.0,
+            transparent: isGlass,
+            opacity: isGlass ? 0.85 : 1.0,
+            ior: isGlass ? 1.5 : 1.0,
+            wireframe: isWireframe
+        }) : new THREE.MeshStandardMaterial({
             color: new THREE.Color(color[0], color[1], color[2]),
             metalness: obj.metalness || 0.4,
-            roughness: obj.roughness || 0.3,
+            roughness: isGlass ? 0.1 : (obj.roughness || 0.3),
+            transparent: isGlass,
+            opacity: isGlass ? 0.85 : 1.0,
             wireframe: isWireframe
         });
 
@@ -977,23 +992,27 @@ function renderFromBlenderScene(objects, promptTitle) {
                                  name.includes('disc') || name.includes('vase') || name.includes('bottle') || 
                                  name.includes('can') || name.includes('mug') || name.includes('rim') || 
                                  name.includes('pipe') || name.includes('piston') || name.includes('table') || 
-                                 name.includes('leg') || name.includes('stem') || name.includes('arm') || name.includes('base');
+                                 name.includes('leg') || name.includes('stem') || name.includes('arm') || 
+                                 name.includes('lens') || name.includes('hinge') || name.includes('tip');
+
+        const isTorus = name.includes('torus') || name.includes('ring') || name.includes('doughnut') || 
+                        name.includes('frame') || name.includes('bridge') || name.includes('rim');
 
         if (name.includes('cone') || (name.includes('shade') && dim[0] > 0.05)) {
             // مخروط (Cone)
             const r = Math.max(dim[0], dim[1]) / 2;
             const h = Math.max(dim[2], 0.05);
             geo = new THREE.ConeGeometry(r, h, 32);
-        } else if (name.includes('torus') || name.includes('ring') || name.includes('doughnut')) {
-            // حلقة (Torus)
+        } else if (isTorus) {
+            // حلقة دائرية ناعمة مجوفة (Torus) للإطارات والجسور
             const r = Math.max(dim[0], dim[1]) / 2;
-            const tube = Math.max(dim[2], 0.01) / 2;
-            geo = new THREE.TorusGeometry(r, tube, 24, 48);
+            const tube = Math.max(dim[2] || 0.05, 0.04) / 2;
+            geo = new THREE.TorusGeometry(r > 0.1 ? r : 0.72, tube, 24, 48);
         } else if (name.includes('sphere') || name.includes('bulb') || name.includes('ball') || name.includes('petal') || name.includes('fruit') || name.includes('leaf') || (isSpherical && !name.includes('cube') && !name.includes('box'))) {
             // كرة بيضاوية أو قشرة مسطحة بدقة الأبعاد الثلاثية الحقيقية (Ellipsoid / Thin Petal)
             geo = new THREE.SphereGeometry(0.5, 32, 24);
         } else if (isCylindricalName || (isRadialSymmetric && !name.includes('cube') && !name.includes('box') && !name.includes('seat'))) {
-            // أسطوانة أو كأس أو قرص (Cylinder / Glass / Disc)
+            // أسطوانة أو كأس أو قرص أو عدسة (Cylinder / Lens / Disc)
             geo = new THREE.CylinderGeometry(0.5, 0.5, 1.0, 32);
         } else {
             // مكعب أو متوازي مستطيلات (Box)
@@ -1010,9 +1029,12 @@ function renderFromBlenderScene(objects, promptTitle) {
             // تطبيق مقياس الأبعاد الحقيقية بدقة (X, Z->Y, Y->Z)
             if (name.includes('sphere') || name.includes('bulb') || name.includes('ball') || name.includes('petal') || name.includes('fruit') || name.includes('leaf') || isSpherical) {
                 mesh.scale.set(dim[0] || 0.1, dim[2] || 0.02, dim[1] || 0.1);
+            } else if (isTorus) {
+                // الحلقات تتولد بمقاييس هندسية متوازنة
+                mesh.scale.set(1, 1, 1);
             } else if (isCylindricalName || (isRadialSymmetric && !name.includes('cube') && !name.includes('box') && !name.includes('seat'))) {
                 mesh.scale.set(dim[0] || 1, dim[2] || 1, dim[1] || 1);
-            } else if (!name.includes('cone') && !name.includes('torus')) {
+            } else if (!name.includes('cone')) {
                 mesh.scale.set(dim[0] || 1, dim[2] || 1, dim[1] || 1);
             }
 
@@ -1489,24 +1511,24 @@ import math
        4. أوراق وسيقان فرعية مائلة.
        5. كأس الزهرة وسبلاتها الخضراء.
        6. بتلات الوردة الحلزونية (Rose Petals) فوق الساق مباشرة عند قمة المشهد! (ممنوع توليد المزهرية وحدها فارغة).
-      * للنظارات الشمسية والإكسسوارات (Modern Eyewear & Sunglasses):
-        يجب بناء النظارة كاملة ومترابطة فيزيائياً بدون أي فراغات هوائية:
-        1. إطارا العدستين (L & R Frames):
-           for sx in (-0.75, 0.75):
-               bpy.ops.mesh.primitive_cylinder_add(radius=0.62, depth=0.08, location=(sx, 0, 0), rotation=(math.radians(90), 0, 0))
-        2. العدستان الزجاجيتان العاكستان (L & R Lenses):
-           for sx in (-0.75, 0.75):
-               bpy.ops.mesh.primitive_cylinder_add(radius=0.56, depth=0.04, location=(sx, 0.01, 0), rotation=(math.radians(90), 0, 0))
-        3. الجسر الأنفي الأوسط الرابط بين العدستين (Nose Bridge):
-           bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0, 0.02, 0.25))
+      * للنظارات الشمسية والإكسسوارات (Modern Designer Eyewear & Sunglasses):
+        يجب بناء النظارة بهندسة احترافية فائقة النعومة ومترابطة فيزيائياً:
+        1. إطارا العدستين الحلقيان (L & R Smooth Torus Frames):
+           for sx in (-0.85, 0.85):
+               bpy.ops.mesh.primitive_torus_add(major_radius=0.72, minor_radius=0.10, location=(sx, 0, 0), rotation=(math.radians(90), 0, 0))
+        2. العدستان الزجاجيتان العاكستان (Deep Blue Transmission Lenses):
+           for sx in (-0.85, 0.85):
+               bpy.ops.mesh.primitive_cylinder_add(radius=0.70, depth=0.035, location=(sx, 0.005, 0), rotation=(math.radians(90), 0, 0))
+        3. الجسر الأنفي الذهبي المقوس الأوسط الرابط بين الإطارين (Curved Golden Bridge):
+           bpy.ops.mesh.primitive_torus_add(major_radius=0.22, minor_radius=0.045, location=(0, 0.02, 0.32), rotation=(0, 0, 0))
            bridge = bpy.context.active_object
-           bridge.scale = (0.42, 0.06, 0.06)
-        4. الذراعان الجانبيان ممتدان للخلف باتجاه -Y مع انحناءة الأذن:
-           for sx in (-1.35, 1.35):
-               bpy.ops.mesh.primitive_cube_add(size=1.0, location=(sx, -0.9, 0.2))
-               arm = bpy.context.active_object
-               arm.scale = (0.05, 1.8, 0.08)
-               bpy.ops.mesh.primitive_cylinder_add(radius=0.04, depth=0.35, location=(sx, -1.85, 0.05), rotation=(math.radians(45), 0, 0))
+           bridge.scale = (0.9, 0.45, 0.45)
+        4. المفاصل الذهبية والأذرع الجانبية الممتدة للخلف بانحناءة الأذن:
+           for sx in (-1.55, 1.55):
+               bpy.ops.mesh.primitive_cylinder_add(radius=0.05, depth=0.12, location=(sx, -0.05, 0.22), rotation=(0, math.radians(90), 0))
+               bpy.ops.mesh.primitive_cube_add(size=1.0, location=(sx, -0.95, 0.22))
+               bpy.context.active_object.scale = (0.045, 1.8, 0.065)
+               bpy.ops.mesh.primitive_cylinder_add(radius=0.04, depth=0.42, location=(sx, -1.9, 0.06), rotation=(math.radians(40), 0, 0))
      * للروبوتات والشخصيات (Robots & Characters):
        الجذع + الرأس بتفاصيل العيون المضيئة + الذراعان والمفاصل + الساقان والقواعد.
      * للمركبات الفضائية والمقاتلات (Spaceships & Starfighters):
@@ -1963,14 +1985,15 @@ print("✅ تم بناء الوردة الجورية في بلندر بنجاح!
         };
     }
 
-    // 2. نظارة شمسية عصرية بإطار أسود وعدسات زجاجية عاكسة
+    // 2. نظارة شمسية عصرية فاخرة بإطار توروس دائري وعدسات زجاجية عاكسة وجسر ذهبي
     if (lower.includes('نظار') || lower.includes('glass') || lower.includes('sunglass')) {
         return {
-            description: `تم بناء <strong>نظارة شمسية عصرية بإطار أسود وعدسات عاكسة</strong> بنجاح!
+            description: `تم بناء <strong>نظارة شمسية عصرية فاخرة (Designer Sunglasses)</strong> بنجاح!
 <ul>
-  <li>إطاران متناسقان أسودان غير لامعين بتصميم عصري ناعم.</li>
-  <li>عدستان زجاجيتان عاكستان ببريق معدني معتم بنسبة انعكاس متقدمة.</li>
-  <li>جسر أنفي أوسط وأذرع جانبية ممتدة مع انحناءة الأذن.</li>
+  <li>إطاران حلقيان دائريان مجوفان (Smooth Torus Rims) بلون كحلي داكن ببريق عصري.</li>
+  <li>عدستان زجاجيتان عاكستان بتأثير كريستالي أزرق ونفاذية ضوئية (Transmission Glass).</li>
+  <li>جسر أنفي مقوس ومفاصل جانبية مطلية بالذهب المعدني اللامع (Polished Gold).</li>
+  <li>أذرع جانبية انسيابية متصلة بزوايا الأذن دون فراغات هوائية.</li>
 </ul>`,
             code: `import bpy
 import math
@@ -1980,65 +2003,81 @@ for _obj in list(bpy.data.objects):
 for _mesh in list(bpy.data.meshes):
     bpy.data.meshes.remove(_mesh, do_unlink=True)
 
-
-# الخامات
+# 1. خامة الإطار الحلقي (كحلي ملكي داكن ببريق ناعم)
 mat_frame = bpy.data.materials.new(name="Sunglasses_Frame")
 mat_frame.use_nodes = True
 bsdf_f = mat_frame.node_tree.nodes.get("Principled BSDF")
-bsdf_f.inputs['Base Color'].default_value = (0.05, 0.05, 0.06, 1.0)
-bsdf_f.inputs['Roughness'].default_value = 0.25
-bsdf_f.inputs['Metallic'].default_value = 0.2
+bsdf_f.inputs['Base Color'].default_value = (0.04, 0.09, 0.16, 1.0)
+bsdf_f.inputs['Roughness'].default_value = 0.15
+bsdf_f.inputs['Metallic'].default_value = 0.35
 
+# 2. خامة العدسات العاكسة والنافذة (أزرق مشع بنفاذية زجاجية حقيقية)
 mat_lens = bpy.data.materials.new(name="Sunglasses_Lens")
 mat_lens.use_nodes = True
 bsdf_l = mat_lens.node_tree.nodes.get("Principled BSDF")
-bsdf_l.inputs['Base Color'].default_value = (0.1, 0.15, 0.25, 1.0)
+bsdf_l.inputs['Base Color'].default_value = (0.05, 0.25, 0.85, 1.0)
 bsdf_l.inputs['Roughness'].default_value = 0.05
-bsdf_l.inputs['Metallic'].default_value = 0.8
-bsdf_l.inputs['Transmission Weight'].default_value = 0.6
-bsdf_l.inputs['Specular IOR Level'].default_value = 0.9
+bsdf_l.inputs['Metallic'].default_value = 0.5
+bsdf_l.inputs['Transmission Weight'].default_value = 0.65
+bsdf_l.inputs['Specular IOR Level'].default_value = 0.95
 
-# 1. إطارات العدستين والعدسات
-for sx in (-0.75, 0.75):
-    # الإطار الخارجي
-    bpy.ops.mesh.primitive_cylinder_add(radius=0.62, depth=0.08, location=(sx, 0, 0), rotation=(math.radians(90), 0, 0))
+# 3. خامة الجسر الذهبي الفاخر
+mat_gold = bpy.data.materials.new(name="Sunglasses_Gold")
+mat_gold.use_nodes = True
+bsdf_g = mat_gold.node_tree.nodes.get("Principled BSDF")
+bsdf_g.inputs['Base Color'].default_value = (0.95, 0.72, 0.12, 1.0)
+bsdf_g.inputs['Roughness'].default_value = 0.15
+bsdf_g.inputs['Metallic'].default_value = 0.95
+
+# 1. بناء الإطارين الدائريين المجوفين والعدسات
+for sx in (-0.85, 0.85):
+    # إطار حلقي ناعم مجوف (Torus)
+    bpy.ops.mesh.primitive_torus_add(major_radius=0.72, minor_radius=0.10, location=(sx, 0, 0), rotation=(math.radians(90), 0, 0))
     frame = bpy.context.active_object
-    frame.name = f"Frame_{'L' if sx < 0 else 'R'}"
+    frame.name = f"Frame_{'R' if sx > 0 else 'L'}"
     frame.data.materials.append(mat_frame)
 
-    # العدسة العاكسة
-    bpy.ops.mesh.primitive_cylinder_add(radius=0.56, depth=0.04, location=(sx, 0.01, 0), rotation=(math.radians(90), 0, 0))
+    # عدسة زجاجية أسطوانية رقيقة بداخل الإطار
+    bpy.ops.mesh.primitive_cylinder_add(radius=0.70, depth=0.035, location=(sx, 0.005, 0), rotation=(math.radians(90), 0, 0))
     lens = bpy.context.active_object
-    lens.name = f"Lens_{'L' if sx < 0 else 'R'}"
+    lens.name = f"Lens_{'R' if sx > 0 else 'L'}"
     lens.data.materials.append(mat_lens)
 
-# 2. الجسر الأنفي الأوسط
-bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0, 0.02, 0.25))
+# 2. الجسر الذهبي المقوس الفخم في المنتصف
+bpy.ops.mesh.primitive_torus_add(major_radius=0.22, minor_radius=0.045, location=(0, 0.02, 0.32), rotation=(0, 0, 0))
 bridge = bpy.context.active_object
-bridge.name = "NoseBridge"
-bridge.scale = (0.42, 0.06, 0.06)
-bridge.data.materials.append(mat_frame)
+bridge.name = "Bridge_Gold"
+bridge.scale = (0.9, 0.45, 0.45)
+bridge.data.materials.append(mat_gold)
 
-# 3. الأذرع الجانبية
-for sx in (-1.35, 1.35):
-    bpy.ops.mesh.primitive_cube_add(size=1.0, location=(sx, -0.9, 0.2))
+# 3. الأذرع الجانبية والمفاصل
+for sx in (-1.55, 1.55):
+    # مفصل جانبي ذهبي
+    bpy.ops.mesh.primitive_cylinder_add(radius=0.05, depth=0.12, location=(sx, -0.05, 0.22), rotation=(0, math.radians(90), 0))
+    hinge = bpy.context.active_object
+    hinge.name = f"Hinge_{'R' if sx > 0 else 'L'}"
+    hinge.data.materials.append(mat_gold)
+
+    # ذراع أفقية ممتدة للخلف
+    bpy.ops.mesh.primitive_cube_add(size=1.0, location=(sx, -0.95, 0.22))
     arm = bpy.context.active_object
-    arm.name = f"TempleArm_{'L' if sx < 0 else 'R'}"
-    arm.scale = (0.05, 1.8, 0.08)
+    arm.name = f"TempleArm_{'R' if sx > 0 else 'L'}"
+    arm.scale = (0.045, 1.8, 0.065)
     arm.data.materials.append(mat_frame)
-    
-    # انحناءة الأذن
-    bpy.ops.mesh.primitive_cylinder_add(radius=0.04, depth=0.35, location=(sx, -1.85, 0.05), rotation=(math.radians(45), 0, 0))
-    ear_tip = bpy.context.active_object
-    ear_tip.name = f"EarTip_{'L' if sx < 0 else 'R'}"
-    ear_tip.data.materials.append(mat_frame)
 
+    # انحناءة نهاية الأذن
+    bpy.ops.mesh.primitive_cylinder_add(radius=0.04, depth=0.42, location=(sx, -1.9, 0.06), rotation=(math.radians(40), 0, 0))
+    tip = bpy.context.active_object
+    tip.name = f"EarTip_{'R' if sx > 0 else 'L'}"
+    tip.data.materials.append(mat_frame)
+
+# تنعيم كافة الأسطح
 for obj in bpy.data.objects:
     if obj.type == 'MESH':
         for poly in obj.data.polygons:
             poly.use_smooth = True
 
-print("✅ تم تصميم النظارة الشمسية العصرية بنجاح في بلندر!")
+print("✅ تم تصميم النظارة الشمسية الفاخرة بنجاح في بلندر!")
 `
         };
     }
