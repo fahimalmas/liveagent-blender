@@ -17,6 +17,20 @@ Engineered by: **Eng. Fahim  Almas**
 
 ---
 
+## 📸 Visual Showcase & Live Demonstrations
+
+| Real-Time Live Sync (Blender 5.2 + Web Viewport) | Interactive Material & Color Inspector |
+| :---: | :---: |
+| ![Live Sync Demo](assets/split_screen_rose_live_sync.jpg) | ![Part Inspector](assets/part_inspector_live_recolor.jpg) |
+
+| Procedural Sci-Fi Spaceship & VFX Thrusters | Cyberpunk Studio Viewport |
+| :---: | :---: |
+| ![Spaceship VFX](assets/split_screen_spaceship_vfx.jpg) | ![Cyberpunk Studio](assets/web_viewport_coffee_table_cyberpunk.jpg) |
+
+> 📹 **Walkthrough Video:** A high-definition recording showcasing the seamless bidirectional synchronization is stored in [`assets/demo_video_realtime_pipeline.mp4`](assets/demo_video_realtime_pipeline.mp4).
+
+---
+
 ## 🏛️ System Architecture
 
 ```mermaid
