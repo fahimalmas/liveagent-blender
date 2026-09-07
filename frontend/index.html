@@ -25,7 +25,7 @@
                 </div>
                 <div class="brand-titles">
                     <h1>LiveAgent <span class="badge-3d">3D</span></h1>
-                    <span class="sub-title">Real-Time AI Modeling Bridge for Blender 5.2 LTS</span>
+                    <span class="sub-title" id="brandSubtitle">Real-Time AI Modeling Bridge for Blender 5.2 LTS</span>
                 </div>
             </div>
 
@@ -38,6 +38,11 @@
                     <span class="icon">⚡</span>
                     <span id="activeModel">Llama 3.3 70B</span>
                 </div>
+                <!-- زر تحويل اللغة بين الإنجليزية والعربية -->
+                <button class="lang-switch-btn" id="langToggleBtn" title="Switch Language / تغيير اللغة">
+                    <span class="lang-icon">🌐</span>
+                    <span id="langLabel">العربية</span>
+                </button>
                 <button class="settings-btn" id="settingsBtn" title="Settings">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
@@ -57,15 +62,15 @@
                         <div class="avatar">🤖</div>
                         <div class="message-content">
                             <div class="sender-name">LiveAgent</div>
-                            <div class="bubble">
-                                <p>Welcome! I am your AI 3D modeling assistant specialized in procedural generation for <strong>Blender 5.2 LTS</strong> and <strong>EEVEE Next</strong>.</p>
-                                <p>I construct parametric meshes, configure physically-based shaders (PBR), and stream commands directly to your running Blender session.</p>
+                            <div class="bubble" id="welcomeBubble">
+                                <p id="welcomeP1">Welcome! I am your AI 3D modeling assistant specialized in procedural generation for <strong>Blender 5.2 LTS</strong> and <strong>EEVEE Next</strong>.</p>
+                                <p id="welcomeP2">I construct parametric meshes, configure physically-based shaders (PBR), and stream commands directly to your running Blender session.</p>
                                 <div class="suggestion-box">
-                                    <span class="suggestion-title">Try one of these certified blueprints:</span>
+                                    <span class="suggestion-title" id="suggestionsTitle">Try one of these certified blueprints:</span>
                                     <div class="suggestions-list">
-                                        <button class="chip" onclick="sendQuickPrompt('Photorealistic velvet red damask rose in a crystal glass vase')">🌹 Master Velvet Rose in Vase</button>
-                                        <button class="chip" onclick="sendQuickPrompt('Luxury designer sunglasses with gold bridge and reflective blue lenses')">🕶️ Luxury Designer Sunglasses</button>
-                                        <button class="chip" onclick="sendQuickPrompt('Modern round wooden coffee table with metallic legs and desk lamp')">☕ Modern Coffee Table & Lamp</button>
+                                        <button class="chip" id="chipRoseBtn" onclick="sendQuickPrompt(I18N[currentLang].chipRosePrompt)">🌹 Master Velvet Rose in Vase</button>
+                                        <button class="chip" id="chipSunglassesBtn" onclick="sendQuickPrompt(I18N[currentLang].chipSunglassesPrompt)">🕶️ Luxury Designer Sunglasses</button>
+                                        <button class="chip" id="chipTableBtn" onclick="sendQuickPrompt(I18N[currentLang].chipTablePrompt)">☕ Modern Coffee Table & Lamp</button>
                                     </div>
                                 </div>
                             </div>
@@ -85,7 +90,7 @@
                         </button>
                     </div>
                     <div class="input-hints">
-                        <span>💡 Supports natural language 3D modeling, continuous Z-stacking, and Blender 5.2 bpy automation</span>
+                        <span id="inputHintsText">💡 Supports natural language 3D modeling, continuous Z-stacking, and Blender 5.2 bpy automation</span>
                     </div>
                 </div>
             </section>
@@ -93,13 +98,13 @@
             <!-- Right Column: Interactive 3D Viewport & Bridge Guide -->
             <section class="viewer-panel">
                 <div class="panel-tabs">
-                    <button class="tab-btn active" data-tab="viewportTab">
+                    <button class="tab-btn active" data-tab="viewportTab" id="tabViewportBtn">
                         <span class="tab-icon">👁️</span>
-                        3D Viewport (Three.js)
+                        <span id="tabViewportText">3D Viewport (Three.js)</span>
                     </button>
-                    <button class="tab-btn" data-tab="bridgeTab">
+                    <button class="tab-btn" data-tab="bridgeTab" id="tabBridgeBtn">
                         <span class="tab-icon">🔌</span>
-                        Blender Bridge Setup
+                        <span id="tabBridgeText">Blender Bridge Setup</span>
                     </button>
                 </div>
 
@@ -115,11 +120,11 @@
                             </div>
                             <!-- Cinematic Studio Presets -->
                             <div class="studio-selector-bar">
-                                <span class="studio-label">Studio:</span>
-                                <button class="studio-btn active" data-studio="pure" title="Clean photographic studio">🌟 Pure</button>
-                                <button class="studio-btn" data-studio="cyberpunk" title="Sci-Fi neon hologram studio">🌌 Cyberpunk</button>
-                                <button class="studio-btn" data-studio="snow" title="Procedural winter snowfall">❄️ Snow</button>
-                                <button class="studio-btn" data-studio="track" title="Asphalt racing track night">🏎️ Track</button>
+                                <span class="studio-label" id="studioLabel">Studio:</span>
+                                <button class="studio-btn active" data-studio="pure" id="studioPureBtn" title="Clean photographic studio">🌟 Pure</button>
+                                <button class="studio-btn" data-studio="cyberpunk" id="studioCyberpunkBtn" title="Sci-Fi neon hologram studio">🌌 Cyberpunk</button>
+                                <button class="studio-btn" data-studio="snow" id="studioSnowBtn" title="Procedural winter snowfall">❄️ Snow</button>
+                                <button class="studio-btn" data-studio="track" id="studioTrackBtn" title="Asphalt racing track night">🏎️ Track</button>
                             </div>
                         </div>
 
@@ -127,14 +132,14 @@
                         <div class="part-inspector-hud" id="partInspectorHud" style="display: none;">
                             <div class="inspector-header">
                                 <div class="part-title-box">
-                                    <span class="inspector-badge">Selected Part</span>
+                                    <span class="inspector-badge" id="inspectorBadgeText">Selected Part</span>
                                     <h4 id="inspectorPartName">Part_Name</h4>
                                 </div>
                                 <button class="close-inspector-btn" id="closeInspectorBtn" title="Close">✕</button>
                             </div>
                             <div class="inspector-body">
                                 <div class="inspector-row">
-                                    <label>Base Color:</label>
+                                    <label id="inspectorBaseColorLabel">Base Color:</label>
                                     <div class="color-picker-wrapper">
                                         <input type="color" id="inspectorColorPicker" value="#ffffff">
                                         <span id="inspectorColorHex">#FFFFFF</span>
@@ -142,14 +147,14 @@
                                 </div>
                                 <div class="inspector-row">
                                     <div class="label-with-val">
-                                        <label>Roughness:</label>
+                                        <label id="inspectorRoughnessLabel">Roughness:</label>
                                         <span id="inspectorRoughnessVal">0.30</span>
                                     </div>
                                     <input type="range" id="inspectorRoughnessSlider" min="0" max="1" step="0.05" value="0.30">
                                 </div>
                                 <div class="inspector-row">
                                     <div class="label-with-val">
-                                        <label>Metallic:</label>
+                                        <label id="inspectorMetallicLabel">Metallic:</label>
                                         <span id="inspectorMetallicVal">0.00</span>
                                     </div>
                                     <input type="range" id="inspectorMetallicSlider" min="0" max="1" step="0.05" value="0.00">
@@ -161,8 +166,11 @@
                         </div>
 
                         <div class="viewport-info-bar">
-                            <span id="objectStats">Model: Ready | Meshes: 0</span>
-                            <span class="helper-text">💡 Click any part on the 3D model to inspect and fine-tune its color and materials in real time!</span>
+                            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                                <span id="objectStats">Model: Ready | Meshes: 0</span>
+                                <button id="syncFromBlenderBtn" class="chip" style="display:none; font-size: 0.74rem; padding: 2px 8px; margin: 0; background: rgba(59, 130, 246, 0.2); border-color: rgba(59, 130, 246, 0.4);" title="Sync Active Scene from Blender">🔄 Sync Active Blender Scene</button>
+                            </div>
+                            <span class="helper-text" id="viewportHelperText">💡 Click any part on the 3D model to inspect and fine-tune its color and materials in real time!</span>
                         </div>
                     </div>
                 </div>
@@ -264,12 +272,12 @@ def setup_scene():
     <div class="modal-backdrop" id="settingsModal">
         <div class="modal-card">
             <div class="modal-header">
-                <h2>AI Engine Settings</h2>
+                <h2 id="settingsModalTitle">AI Engine Settings</h2>
                 <button class="close-modal-btn" id="closeSettingsBtn">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>AI Provider:</label>
+                    <label id="settingsProviderLabel">AI Provider:</label>
                     <select id="providerSelect">
                         <option value="groq">⚡ Groq Cloud (Free 14,400 req/day - Ultra Fast LPU)</option>
                         <option value="gemini">🌟 Google Gemini (Free 1,500 req/day - Google AI Studio)</option>
@@ -279,7 +287,7 @@ def setup_scene():
                 </div>
 
                 <div class="form-group">
-                    <label>AI Model:</label>
+                    <label id="settingsModelLabel">AI Model:</label>
                     <select id="modelSelect">
                         <!-- Populated dynamically based on chosen provider -->
                     </select>
@@ -294,7 +302,7 @@ def setup_scene():
                 </div>
 
                 <div class="form-group">
-                    <label>Blender Bridge Host:</label>
+                    <label id="bridgeHostLabel">Blender Bridge Host:</label>
                     <input type="text" id="bridgeHost" value="http://localhost:8123">
                 </div>
             </div>
@@ -304,6 +312,6 @@ def setup_scene():
         </div>
     </div>
 
-    <script src="app.js?v=20260907_v40"></script>
+    <script src="app.js?v=20260907_v41"></script>
 </body>
 </html>

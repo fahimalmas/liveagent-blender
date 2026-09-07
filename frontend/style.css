@@ -160,6 +160,30 @@ body {
     gap: 6px;
 }
 
+.lang-switch-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.lang-switch-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-highlight);
+    color: #38bdf8;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+}
+
 .settings-btn {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);

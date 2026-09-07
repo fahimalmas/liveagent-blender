@@ -3,6 +3,231 @@
  * Handles UI interactions, Three.js 3D dynamic viewport, bpy code generator, and Blender Bridge communication.
  */
 
+// Language Localization System (English Default & Arabic Toggle)
+let currentLang = localStorage.getItem('liveagent_lang') || 'en';
+
+const I18N = {
+    en: {
+        langBtnText: "العربية",
+        brandSubtitle: "Real-Time AI Modeling Bridge for Blender 5.2 LTS",
+        bridgeStatusChecking: "Blender Bridge: Checking...",
+        bridgeStatusConnected: "Blender Bridge: Connected",
+        bridgeStatusDisconnected: "Blender Bridge: Disconnected (Click for setup)",
+        settingsTitle: "AI Engine Settings",
+        tabViewportText: "3D Viewport (Three.js)",
+        tabBridgeText: "Blender Bridge Setup",
+        btnRecenter: "🎯 Recenter",
+        btnWireframe: "🕸️ Wireframe",
+        btnExecute: "⚡ Execute in Blender",
+        studioLabel: "Studio:",
+        studioPure: "🌟 Pure",
+        studioCyberpunk: "🌌 Cyberpunk",
+        studioSnow: "❄️ Snow",
+        studioTrack: "🏎️ Track",
+        inspectorBadge: "Selected Part",
+        inspectorBaseColor: "Base Color:",
+        inspectorRoughness: "Roughness:",
+        inspectorMetallic: "Metallic:",
+        inspectorSyncStatus: "🟢 Live Sync with Blender 5.2",
+        helperText: "💡 Click any part on the 3D model to inspect and fine-tune its color and materials in real time!",
+        inputPlaceholder: "Describe what you want to create in Blender... (e.g. Luxury sports car, sci-fi starfighter, gaming chair)",
+        inputHints: "💡 Supports natural language 3D modeling, continuous Z-stacking, and Blender 5.2 bpy automation",
+        sendBtnTitle: "Send Prompt",
+        modalTitle: "AI Engine Settings",
+        modalProviderLabel: "AI Provider:",
+        modalModelLabel: "AI Model:",
+        modalApiKeyLabel: "API Key:",
+        modalBridgeHostLabel: "Blender Bridge Host:",
+        modalSaveBtn: "Save Settings",
+        welcomeP1: "Welcome! I am your AI 3D modeling assistant specialized in procedural generation for <strong>Blender 5.2 LTS</strong> and <strong>EEVEE Next</strong>.",
+        welcomeP2: "I construct parametric meshes, configure physically-based shaders (PBR), and stream commands directly to your running Blender session.",
+        suggestionsTitle: "Try one of these certified blueprints:",
+        chipRose: "🌹 Master Velvet Rose in Vase",
+        chipSunglasses: "🕶️ Luxury Designer Sunglasses",
+        chipTable: "☕ Modern Coffee Table & Lamp",
+        chipRosePrompt: "Photorealistic velvet red damask rose in a crystal glass vase",
+        chipSunglassesPrompt: "Luxury designer sunglasses with gold bridge and reflective blue lenses",
+        chipTablePrompt: "Modern round wooden coffee table with metallic legs and desk lamp",
+        platformReady: "Showcase Demo (Torus Knot) | Ready to build in Blender",
+        platformReadyNoModel: "Platform Ready | Enter a prompt to construct 3D models in Blender",
+        userAvatar: "You",
+        userName: "Engineer",
+        copyCode: "📋 Copy Code",
+        copiedCode: "✅ Copied!",
+        syncBtnText: "🔄 Sync Active Blender Scene"
+    },
+    ar: {
+        langBtnText: "English",
+        brandSubtitle: "الوكيل الذكي للتحكم ببرنامج Blender 5.2 LTS فورياً",
+        bridgeStatusChecking: "جسر بلندر: جاري الفحص...",
+        bridgeStatusConnected: "جسر بلندر: متصل",
+        bridgeStatusDisconnected: "جسر بلندر: غير متصل (اضغط للشرح)",
+        settingsTitle: "إعدادات محرك الذكاء الاصطناعي",
+        tabViewportText: "معاينة ثلاثية الأبعاد حية (Three.js)",
+        tabBridgeText: "جسر الاتصال والتعليمات",
+        btnRecenter: "🎯 مركز الرؤية",
+        btnWireframe: "🕸️ Wireframe",
+        btnExecute: "⚡ تنفيذ في Blender",
+        studioLabel: "الاستوديو:",
+        studioPure: "🌟 نقي",
+        studioCyberpunk: "🌌 سايبربانك",
+        studioSnow: "❄️ ثلج",
+        studioTrack: "🏎️ مضمار",
+        inspectorBadge: "قطعة محددة",
+        inspectorBaseColor: "اللون الأساسي:",
+        inspectorRoughness: "الخشونة (Roughness):",
+        inspectorMetallic: "المعدنية (Metallic):",
+        inspectorSyncStatus: "🟢 مزامنة فورية مع Blender 5.2",
+        helperText: "💡 انقر على أي جزء من المجسم لتعديل لونه ولمعانه ومزامنته فورياً مع بلندر!",
+        inputPlaceholder: "اطلب ما ترغب بتصميمه في بلندر... (مثال: سيارة رياضية خارقة، مقاتلة فضائية، كرسي قيمنق)",
+        inputHints: "💡 يدعم الأوامر الهندسية الدقيقة وتوليد كود bpy ومعدلات Subdivision Surface",
+        sendBtnTitle: "إرسال",
+        modalTitle: "إعدادات محرك الذكاء الاصطناعي",
+        modalProviderLabel: "مزود الخدمة (AI Provider):",
+        modalModelLabel: "نموذج الذكاء الاصطناعي (Model):",
+        modalApiKeyLabel: "مفتاح API الخاص بك:",
+        modalBridgeHostLabel: "عنوان جسر بلندر (Blender Bridge Host):",
+        modalSaveBtn: "حفظ الإعدادات",
+        welcomeP1: "أهلاً بك يا مهندس! أنا وكيلك الذكي المتخصص في النمذجة والتحكم ببرنامج <strong>Blender 5.2 LTS</strong> ومحرك <strong>EEVEE Next</strong>.",
+        welcomeP2: "أستطيع بناء المجسمات ثلاثية الأبعاد، وضبط الخامات والإضاءة، وتطبيق المعدلات (Modifiers) بدقة برمجية عالية وتنفيذها في بلندر فورياً.",
+        suggestionsTitle: "جرّب أحد النماذج المعتمدة المضمونة:",
+        chipRose: "🌹 صمم وردة جورية واقعية",
+        chipSunglasses: "🕶️ نظارة شمسية عصرية فاخرة",
+        chipTable: "☕ طاولة قهوة مودرن ومصباح",
+        chipRosePrompt: "صمم لي وردة جورية حمراء واقعية في مزهرية",
+        chipSunglassesPrompt: "صمم لي نظارة شمسية عصرية بإطار أسود وعدسات زجاجية عاكسة",
+        chipTablePrompt: "صمم لي طاولة قهوة خشبية دائرية مع مصباح مكتبي",
+        platformReady: "مجسم استعراضي ترحيبي (Torus Knot) | جاهز لبناء أي مجسم في بلندر",
+        platformReadyNoModel: "المنصة جاهزة | بانتظار أمر التصميم لبناء المجسم فورياً في بلندر",
+        userAvatar: "أنت",
+        userName: "المهندس",
+        copyCode: "📋 نسخ الكود",
+        copiedCode: "✅ تم النسخ!",
+        syncBtnText: "🔄 مزامنة مشهد بلندر المفتوح"
+    }
+};
+
+function setLanguage(lang) {
+    currentLang = (lang === 'ar') ? 'ar' : 'en';
+    localStorage.setItem('liveagent_lang', currentLang);
+    const dict = I18N[currentLang];
+
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = (currentLang === 'ar') ? 'rtl' : 'ltr';
+
+    const langLabel = document.getElementById('langLabel');
+    if (langLabel) langLabel.innerText = dict.langBtnText;
+
+    const brandSubtitle = document.getElementById('brandSubtitle');
+    if (brandSubtitle) brandSubtitle.innerText = dict.brandSubtitle;
+
+    const tabViewportText = document.getElementById('tabViewportText');
+    if (tabViewportText) tabViewportText.innerText = dict.tabViewportText;
+
+    const tabBridgeText = document.getElementById('tabBridgeText');
+    if (tabBridgeText) tabBridgeText.innerText = dict.tabBridgeText;
+
+    const resetCameraBtn = document.getElementById('resetCameraBtn');
+    if (resetCameraBtn) resetCameraBtn.innerText = dict.btnRecenter;
+
+    const toggleWireframeBtn = document.getElementById('toggleWireframeBtn');
+    if (toggleWireframeBtn) toggleWireframeBtn.innerText = dict.btnWireframe;
+
+    const sendToBlenderBtn = document.getElementById('sendToBlenderBtn');
+    if (sendToBlenderBtn && !sendToBlenderBtn.dataset.busy) sendToBlenderBtn.innerText = dict.btnExecute;
+
+    const studioLabel = document.getElementById('studioLabel');
+    if (studioLabel) studioLabel.innerText = dict.studioLabel;
+
+    const studioPureBtn = document.getElementById('studioPureBtn');
+    if (studioPureBtn) studioPureBtn.innerText = dict.studioPure;
+
+    const studioCyberpunkBtn = document.getElementById('studioCyberpunkBtn');
+    if (studioCyberpunkBtn) studioCyberpunkBtn.innerText = dict.studioCyberpunk;
+
+    const studioSnowBtn = document.getElementById('studioSnowBtn');
+    if (studioSnowBtn) studioSnowBtn.innerText = dict.studioSnow;
+
+    const studioTrackBtn = document.getElementById('studioTrackBtn');
+    if (studioTrackBtn) studioTrackBtn.innerText = dict.studioTrack;
+
+    const inspectorBadgeText = document.getElementById('inspectorBadgeText');
+    if (inspectorBadgeText) inspectorBadgeText.innerText = dict.inspectorBadge;
+
+    const inspectorBaseColorLabel = document.getElementById('inspectorBaseColorLabel');
+    if (inspectorBaseColorLabel) inspectorBaseColorLabel.innerText = dict.inspectorBaseColor;
+
+    const inspectorRoughnessLabel = document.getElementById('inspectorRoughnessLabel');
+    if (inspectorRoughnessLabel) inspectorRoughnessLabel.innerText = dict.inspectorRoughness;
+
+    const inspectorMetallicLabel = document.getElementById('inspectorMetallicLabel');
+    if (inspectorMetallicLabel) inspectorMetallicLabel.innerText = dict.inspectorMetallic;
+
+    const viewportHelperText = document.getElementById('viewportHelperText');
+    if (viewportHelperText) viewportHelperText.innerText = dict.helperText;
+
+    const syncFromBlenderBtn = document.getElementById('syncFromBlenderBtn');
+    if (syncFromBlenderBtn) syncFromBlenderBtn.innerText = dict.syncBtnText;
+
+    const userInput = document.getElementById('userInput');
+    if (userInput) userInput.placeholder = dict.inputPlaceholder;
+
+    const inputHintsText = document.getElementById('inputHintsText');
+    if (inputHintsText) inputHintsText.innerText = dict.inputHints;
+
+    const sendBtn = document.getElementById('sendBtn');
+    if (sendBtn) sendBtn.title = dict.sendBtnTitle;
+
+    const welcomeP1 = document.getElementById('welcomeP1');
+    if (welcomeP1) welcomeP1.innerHTML = dict.welcomeP1;
+
+    const welcomeP2 = document.getElementById('welcomeP2');
+    if (welcomeP2) welcomeP2.innerHTML = dict.welcomeP2;
+
+    const suggestionsTitle = document.getElementById('suggestionsTitle');
+    if (suggestionsTitle) suggestionsTitle.innerText = dict.suggestionsTitle;
+
+    const chipRoseBtn = document.getElementById('chipRoseBtn');
+    if (chipRoseBtn) chipRoseBtn.innerText = dict.chipRose;
+
+    const chipSunglassesBtn = document.getElementById('chipSunglassesBtn');
+    if (chipSunglassesBtn) chipSunglassesBtn.innerText = dict.chipSunglasses;
+
+    const chipTableBtn = document.getElementById('chipTableBtn');
+    if (chipTableBtn) chipTableBtn.innerText = dict.chipTable;
+
+    const settingsModalTitle = document.getElementById('settingsModalTitle');
+    if (settingsModalTitle) settingsModalTitle.innerText = dict.modalTitle;
+
+    const settingsProviderLabel = document.getElementById('settingsProviderLabel');
+    if (settingsProviderLabel) settingsProviderLabel.innerText = dict.modalProviderLabel;
+
+    const settingsModelLabel = document.getElementById('settingsModelLabel');
+    if (settingsModelLabel) settingsModelLabel.innerText = dict.modalModelLabel;
+
+    const bridgeHostLabel = document.getElementById('bridgeHostLabel');
+    if (bridgeHostLabel) bridgeHostLabel.innerText = dict.modalBridgeHostLabel;
+
+    const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+    if (saveSettingsBtn) saveSettingsBtn.innerText = dict.modalSaveBtn;
+
+    const statsEl = document.getElementById('objectStats');
+    if (statsEl && currentMeshGroup && currentMeshGroup.userData && currentMeshGroup.userData.isStartupModel) {
+        statsEl.innerText = dict.platformReady;
+    }
+}
+
+function initLanguageControls() {
+    const langBtn = document.getElementById('langToggleBtn');
+    if (langBtn) {
+        langBtn.addEventListener('click', () => {
+            const nextLang = (currentLang === 'en') ? 'ar' : 'en';
+            setLanguage(nextLang);
+        });
+    }
+    setLanguage(currentLang);
+}
+
 // 1. المتغيرات العامة لـ Three.js
 let scene, camera, renderer, controls;
 let currentMeshGroup = null;
@@ -679,6 +904,7 @@ if obj:
 
 // 2. تهيئة المشهد ثلاثي الأبعاد فور تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
+    initLanguageControls();
     init3DViewport();
     initTabSwitching();
     initChatControls();
@@ -808,6 +1034,7 @@ function buildDefaultStartupModel() {
     clearCurrentModel();
     currentMeshGroup = new THREE.Group();
     currentMeshGroup.userData.autoRotate = true;
+    currentMeshGroup.userData.isStartupModel = true;
 
     const baseMat = new THREE.MeshStandardMaterial({
         color: 0x1e293b,
@@ -839,7 +1066,7 @@ function buildDefaultStartupModel() {
 
     const statsEl = document.getElementById('objectStats');
     if (statsEl) {
-        statsEl.innerText = 'Platform Ready | Enter a prompt to construct 3D models in Blender';
+        statsEl.innerText = I18N[currentLang]?.platformReady || 'Showcase Demo (Torus Knot) | Ready to build in Blender';
     }
 
     camera.position.set(1.6, 1.4, 3.2);
@@ -2176,6 +2403,7 @@ function getBridgeHost() {
 function initBridgeControls() {
     const testBtn = document.getElementById('testBridgeBtn');
     const resultEl = document.getElementById('bridgeTestResult');
+    const syncBtn = document.getElementById('syncFromBlenderBtn');
 
     function checkBridge() {
         fetch(`${getBridgeHost()}/ping`, { method: 'GET', mode: 'cors' })
@@ -2184,8 +2412,11 @@ function initBridgeControls() {
                 const statusEl = document.getElementById('blenderStatus');
                 if (statusEl) {
                     statusEl.className = 'status-pill connected';
-                    statusEl.querySelector('.status-text').innerText = `Blender Bridge: Connected (${data.version || 'Active'})`;
+                    statusEl.querySelector('.status-text').innerText = (currentLang === 'ar')
+                        ? `جسر بلندر: متصل (${data.version || 'Active'})`
+                        : `Blender Bridge: Connected (${data.version || 'Active'})`;
                 }
+                if (syncBtn) syncBtn.style.display = 'inline-block';
                 if (resultEl) {
                     resultEl.innerText = '🟢 Connected successfully with Blender ' + (data.version || '');
                     resultEl.style.color = '#10b981';
@@ -2195,13 +2426,43 @@ function initBridgeControls() {
                 const statusEl = document.getElementById('blenderStatus');
                 if (statusEl) {
                     statusEl.className = 'status-pill disconnected';
-                    statusEl.querySelector('.status-text').innerText = 'Blender Bridge: Disconnected (Click to setup)';
+                    statusEl.querySelector('.status-text').innerText = (currentLang === 'ar')
+                        ? 'جسر بلندر: غير متصل (اضغط للشرح)'
+                        : 'Blender Bridge: Disconnected (Click to setup)';
                 }
+                if (syncBtn) syncBtn.style.display = 'none';
                 if (resultEl) {
                     resultEl.innerText = '⚠️ Blender is not currently connected. (Make sure add-on is active or run launch_blender_bridge.bat)';
                     resultEl.style.color = '#f59e0b';
                 }
             });
+    }
+
+    if (syncBtn) {
+        syncBtn.addEventListener('click', () => {
+            syncBtn.innerText = (currentLang === 'ar') ? '⏳ جاري المزامنة...' : '⏳ Syncing...';
+            fetch(`${getBridgeHost()}/scene`)
+                .then(r => r.json())
+                .then(sceneData => {
+                    if (sceneData && sceneData.objects && sceneData.objects.length > 0) {
+                        renderFromBlenderScene(sceneData.objects, 'Blender Active Scene');
+                        syncBtn.innerText = (currentLang === 'ar')
+                            ? `✅ تمت المزامنة (${sceneData.objects_count} مجسم)`
+                            : `✅ Synced (${sceneData.objects_count} objects)`;
+                    } else {
+                        syncBtn.innerText = (currentLang === 'ar') ? '⚠️ المشهد فارغ في بلندر' : '⚠️ Scene is empty in Blender';
+                    }
+                    setTimeout(() => {
+                        syncBtn.innerText = I18N[currentLang]?.syncBtnText || '🔄 Sync Active Blender Scene';
+                    }, 3000);
+                })
+                .catch(err => {
+                    syncBtn.innerText = (currentLang === 'ar') ? '❌ تعذر جلب المشهد' : '❌ Failed to fetch scene';
+                    setTimeout(() => {
+                        syncBtn.innerText = I18N[currentLang]?.syncBtnText || '🔄 Sync Active Blender Scene';
+                    }, 3000);
+                });
+        });
     }
 
     setInterval(checkBridge, 4000);
