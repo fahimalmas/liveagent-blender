@@ -3,8 +3,6 @@
 [![Blender 5.2 LTS](https://img.shields.io/badge/Blender-5.2%20LTS-E87D0D?logo=blender&logoColor=white)](https://www.blender.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Author](https://img.shields.io/badge/Author-Eng.%20Fahim%20Almas-00b4d8)](https://www.fmas.dev/)
-[![Credential: Vertex AI](https://img.shields.io/badge/Google%20Cloud-Vertex%20AI%20Badge-4285F4?logo=googlecloud&logoColor=white)](https://www.credly.com/badges/34d55684-10d4-4a96-b5bc-775f45df7a28/public_url)
-[![Credential: 1M Prompters](https://img.shields.io/badge/Dubai%20Future-1M%20Prompters-gold)](https://omp.dub.ai/certificate/gS2r9rr9EkiN)
 
 > **LiveAgent 3D** is an open, modular system connecting modern web interfaces (Three.js WebGL) with **Blender 5.2 LTS** in real time. It pairs specialized LLM reasoning with a local execution bridge, allowing natural language prompts to produce production-ready 3D geometry, procedural materials, and lighting directly inside Blender.
 
@@ -12,13 +10,10 @@
 
 ## 👨‍💻 Developer & Author
 
-Designed and engineered by **Eng. Fahim Salem Almas (فاهم سالم الماس)**
+Engineered by: **Eng. Fahim  Almas**
 - 🌐 **Personal Website:** [fmas.dev](https://www.fmas.dev/)
 - 🐙 **GitHub:** [@fahimalmas](https://github.com/fahimalmas)
-- 🏅 **Certifications & Badges:**
-  - [Google Cloud Vertex AI Prompt Design (Credly)](https://www.credly.com/badges/34d55684-10d4-4a96-b5bc-775f45df7a28/public_url)
-  - [Dubai Future Foundation — 1 Million Prompters](https://omp.dub.ai/certificate/gS2r9rr9EkiN)
-  - Author of [Sanad AI Decision Engine](https://github.com/fahimalmas/sanad_ai_decision_engine)
+- Author of [Sanad AI Decision Engine](https://github.com/fahimalmas/sanad_ai_decision_engine)
 
 ---
 

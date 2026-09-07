@@ -54,7 +54,19 @@ const I18N = {
         userName: "Engineer",
         copyCode: "📋 Copy Code",
         copiedCode: "✅ Copied!",
-        syncBtnText: "🔄 Sync Active Blender Scene"
+        syncBtnText: "🔄 Sync Active Blender Scene",
+        bridgeGuideTitle: "🔌 Automatic Connection to Blender (No Copy-Pasting Required!)",
+        bridgeGuideIntro: "Say goodbye to copying and pasting scripts! LiveAgent provides a lightweight Blender add-on that runs quietly in the background whenever Blender is open.",
+        bridgeAddonTitle: "📦 Official Blender Add-on (LiveAgent 3D Add-on)",
+        bridgeAddonDesc: "Install once inside Blender, and real-time live synchronization activates automatically forever!",
+        bridgeDownloadBtn: "📥 Download Add-on (liveagent_bridge.zip)",
+        bridgeStep1: "<strong>Download the add-on</strong> by clicking the green button above (or locate <code>blender_addon/liveagent_bridge.zip</code> in the repository).",
+        bridgeStep2: "Open <strong>Blender</strong> and navigate to top menu: <code>Edit > Preferences > Add-ons</code>.",
+        bridgeStep3: "Click the gear icon ⚙️ at the top right, select <strong>Install from Disk...</strong>, and choose <code>liveagent_bridge.zip</code>.",
+        bridgeStep4: "Check the box <strong>✔️ Enable Add-on</strong>! The <strong>LiveAgent</strong> panel will appear in the 3D Viewport sidebar (press <code>N</code>), and the local bridge server (port 8123) starts automatically.",
+        bridgeQuickLaunchTip: "💡 <b>Quick Launch Shortcut:</b> You can also double-click <code>launch_blender_bridge.bat</code> in the project folder to launch Blender with the bridge active with a single click!",
+        testBridgeBtn: "🔄 Test Connection to Blender",
+        devEngineeredBy: "Engineered by: Eng. Fahim  Almas"
     },
     ar: {
         langBtnText: "English",
@@ -103,7 +115,19 @@ const I18N = {
         userName: "المهندس",
         copyCode: "📋 نسخ الكود",
         copiedCode: "✅ تم النسخ!",
-        syncBtnText: "🔄 مزامنة مشهد بلندر المفتوح"
+        syncBtnText: "🔄 مزامنة مشهد بلندر المفتوح",
+        bridgeGuideTitle: "🔌 الاتصال التلقائي ببرنامج بلندر (بدون نسخ أو لصق!)",
+        bridgeGuideIntro: "وداعاً لنسخ ولصق الأكواد يدوياً! يوفر LiveAgent إضافة برمجية خفيفة تعمل في خلفية برنامج بلندر بمجرد فتحه.",
+        bridgeAddonTitle: "📦 إضافة بلندر الرسمية (LiveAgent 3D Add-on)",
+        bridgeAddonDesc: "قم بتثبيتها مرة واحدة داخل بلندر، وسيبدأ التزامن والتنفيذ التلقائي فورياً دائماً!",
+        bridgeDownloadBtn: "📥 تحميل الإضافة (liveagent_bridge.zip)",
+        bridgeStep1: "<strong>حمّل ملف الإضافة</strong> عبر الزر الأخضر بالأعلى (أو تجده داخل مجلد <code>blender_addon/liveagent_bridge.zip</code>).",
+        bridgeStep2: "افتح برنامج <strong>Blender</strong> واذهب إلى القائمة العلوية: <code>Edit > Preferences > Add-ons</code>.",
+        bridgeStep3: "اضغط على أيقونة الترس ⚙️ في الزاوية العلوية اليمنى، ثم اختر <strong>Install from Disk...</strong> وحدد ملف <code>liveagent_bridge.zip</code>.",
+        bridgeStep4: "ضع علامة الصح <strong>✔️ لتفعيل الإضافة (Enable Add-on)</strong>! ستظهر لوحة <strong>LiveAgent</strong> في الشريط الجانبي للشاشة (اضغط <code>N</code>)، وسيبدأ خادم الاتصال المحلي (port 8123) بالعمل تلقائياً.",
+        bridgeShortcutTip: "💡 <b>اختصار التشغيل السريع:</b> يمكنك أيضاً النقر المزدوج على ملف <code>launch_blender_bridge.bat</code> في المجلد لتشغيل بلندر مع تفعيل الجسر مباشرة بنقرة واحدة!",
+        testBridgeBtn: "🔄 فحص الاتصال مع بلندر",
+        devEngineeredBy: "Engineered by: Eng. Fahim  Almas"
     }
 };
 
@@ -211,9 +235,57 @@ function setLanguage(lang) {
     const saveSettingsBtn = document.getElementById('saveSettingsBtn');
     if (saveSettingsBtn) saveSettingsBtn.innerText = dict.modalSaveBtn;
 
+    const bridgeGuideTitle = document.getElementById('bridgeGuideTitle');
+    if (bridgeGuideTitle) bridgeGuideTitle.innerText = dict.bridgeGuideTitle;
+
+    const bridgeGuideIntro = document.getElementById('bridgeGuideIntro');
+    if (bridgeGuideIntro) bridgeGuideIntro.innerText = dict.bridgeGuideIntro;
+
+    const bridgeAddonTitle = document.getElementById('bridgeAddonTitle');
+    if (bridgeAddonTitle) bridgeAddonTitle.innerText = dict.bridgeAddonTitle;
+
+    const bridgeAddonDesc = document.getElementById('bridgeAddonDesc');
+    if (bridgeAddonDesc) bridgeAddonDesc.innerText = dict.bridgeAddonDesc;
+
+    const bridgeDownloadBtn = document.getElementById('bridgeDownloadBtn');
+    if (bridgeDownloadBtn) bridgeDownloadBtn.innerText = dict.bridgeDownloadBtn;
+
+    const bridgeStep1 = document.getElementById('bridgeStep1');
+    if (bridgeStep1) bridgeStep1.innerHTML = dict.bridgeStep1;
+
+    const bridgeStep2 = document.getElementById('bridgeStep2');
+    if (bridgeStep2) bridgeStep2.innerHTML = dict.bridgeStep2;
+
+    const bridgeStep3 = document.getElementById('bridgeStep3');
+    if (bridgeStep3) bridgeStep3.innerHTML = dict.bridgeStep3;
+
+    const bridgeStep4 = document.getElementById('bridgeStep4');
+    if (bridgeStep4) bridgeStep4.innerHTML = dict.bridgeStep4;
+
+    const bridgeQuickLaunchTip = document.getElementById('bridgeQuickLaunchTip');
+    if (bridgeQuickLaunchTip) bridgeQuickLaunchTip.innerHTML = dict.bridgeQuickLaunchTip;
+
+    const testBridgeBtn = document.getElementById('testBridgeBtn');
+    if (testBridgeBtn) testBridgeBtn.innerText = dict.testBridgeBtn;
+
+    const devCreditTitle = document.getElementById('devCreditTitle');
+    if (devCreditTitle) devCreditTitle.innerText = dict.devEngineeredBy;
+
     const statsEl = document.getElementById('objectStats');
     if (statsEl && currentMeshGroup && currentMeshGroup.userData && currentMeshGroup.userData.isStartupModel) {
         statsEl.innerText = dict.platformReady;
+    }
+
+    const statusEl = document.getElementById('blenderStatus');
+    if (statusEl) {
+        const textSpan = statusEl.querySelector('.status-text');
+        if (textSpan) {
+            if (statusEl.classList.contains('connected')) {
+                textSpan.innerText = (currentLang === 'ar') ? 'جسر بلندر: متصل' : 'Blender Bridge: Connected';
+            } else {
+                textSpan.innerText = dict.bridgeStatusDisconnected;
+            }
+        }
     }
 }
 

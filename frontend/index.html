@@ -194,15 +194,15 @@ def setup_scene():
                 <!-- Tab 2: Blender Bridge Guide & Developer Credits -->
                 <div class="tab-content" id="bridgeTab">
                     <div class="bridge-guide">
-                        <h3>🔌 Automatic Connection to Blender (No Copy-Pasting Required!)</h3>
-                        <p class="guide-intro">Say goodbye to copying and pasting scripts! LiveAgent provides a lightweight Blender add-on that runs quietly in the background whenever Blender is open.</p>
+                        <h3 id="bridgeGuideTitle">🔌 Automatic Connection to Blender (No Copy-Pasting Required!)</h3>
+                        <p class="guide-intro" id="bridgeGuideIntro">Say goodbye to copying and pasting scripts! LiveAgent provides a lightweight Blender add-on that runs quietly in the background whenever Blender is open.</p>
                         
                         <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
                             <div>
-                                <h4 style="color: #34d399; margin-bottom: 4px; font-size: 1.05rem;">📦 Official Blender Add-on (LiveAgent 3D Add-on)</h4>
-                                <p style="font-size: 0.84rem; color: var(--text-secondary); margin: 0;">Install once inside Blender, and real-time live synchronization activates automatically forever!</p>
+                                <h4 id="bridgeAddonTitle" style="color: #34d399; margin-bottom: 4px; font-size: 1.05rem;">📦 Official Blender Add-on (LiveAgent 3D Add-on)</h4>
+                                <p id="bridgeAddonDesc" style="font-size: 0.84rem; color: var(--text-secondary); margin: 0;">Install once inside Blender, and real-time live synchronization activates automatically forever!</p>
                             </div>
-                            <a href="liveagent_bridge.zip" download="liveagent_bridge.zip" class="test-conn-btn" style="background: linear-gradient(135deg, #10b981, #059669); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: bold;">
+                            <a href="liveagent_bridge.zip" download="liveagent_bridge.zip" id="bridgeDownloadBtn" class="test-conn-btn" style="background: linear-gradient(135deg, #10b981, #059669); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: bold;">
                                 📥 Download Add-on (liveagent_bridge.zip)
                             </a>
                         </div>
@@ -210,31 +210,31 @@ def setup_scene():
                         <div class="steps-box">
                             <div class="step-item">
                                 <span class="step-num">1</span>
-                                <div class="step-desc">
+                                <div class="step-desc" id="bridgeStep1">
                                     <strong>Download the add-on</strong> by clicking the green button above (or locate <code>blender_addon/liveagent_bridge.zip</code> in the repository).
                                 </div>
                             </div>
                             <div class="step-item">
                                 <span class="step-num">2</span>
-                                <div class="step-desc">
+                                <div class="step-desc" id="bridgeStep2">
                                     Open <strong>Blender</strong> and navigate to top menu: <code>Edit > Preferences > Add-ons</code>.
                                 </div>
                             </div>
                             <div class="step-item">
                                 <span class="step-num">3</span>
-                                <div class="step-desc">
+                                <div class="step-desc" id="bridgeStep3">
                                     Click the gear icon ⚙️ at the top right, select <strong>Install from Disk...</strong>, and choose <code>liveagent_bridge.zip</code>.
                                 </div>
                             </div>
                             <div class="step-item">
                                 <span class="step-num">4</span>
-                                <div class="step-desc">
+                                <div class="step-desc" id="bridgeStep4">
                                     Check the box <strong>✔️ Enable Add-on</strong>! The <strong>LiveAgent</strong> panel will appear in the 3D Viewport sidebar (press <code>N</code>), and the local bridge server (port 8123) starts automatically.
                                 </div>
                             </div>
                         </div>
 
-                        <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 14px 18px; margin: 18px 0; font-size: 0.86rem; color: var(--text-secondary);">
+                        <div id="bridgeQuickLaunchTip" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 14px 18px; margin: 18px 0; font-size: 0.86rem; color: var(--text-secondary);">
                             💡 <b>Quick Launch Shortcut:</b> You can also double-click <code>launch_blender_bridge.bat</code> in the project folder to launch Blender with the bridge active with a single click!
                         </div>
 
@@ -245,14 +245,10 @@ def setup_scene():
 
                         <!-- Developer Badge & Engineering Leadership -->
                         <div style="margin-top: 25px; padding: 18px 22px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.75)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-                            <div style="font-size: 1.12rem; font-weight: bold; color: #38bdf8; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                <span>🇦🇪</span> <span>Engineered by: Eng. Fahim Salem Almas (فاهم سالم الماس)</span>
+                            <div id="devCreditTitle" style="font-size: 1.12rem; font-weight: bold; color: #38bdf8; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                Engineered by: Eng. Fahim  Almas
                             </div>
-                            <p style="font-size: 0.86rem; color: #cbd5e1; margin: 0 0 10px 0; line-height: 1.6;">
-                                AI Agents & Prompt Systems Engineer • 3D Procedural Architect<br>
-                                Certified in <b>Google Cloud: Prompt Design in Vertex AI</b> & <b>Dubai Future Foundation</b> (1 Million Prompters)
-                            </p>
-                            <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; font-size: 0.86rem;">
+                            <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; font-size: 0.86rem; margin-top: 8px;">
                                 <a href="https://www.fmas.dev/" target="_blank" style="color: #60a5fa; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
                                     🌐 Portfolio: fmas.dev
                                 </a>
@@ -312,6 +308,6 @@ def setup_scene():
         </div>
     </div>
 
-    <script src="app.js?v=20260907_v41"></script>
+    <script src="app.js?v=20260907_v42"></script>
 </body>
 </html>
