@@ -8,15 +8,6 @@
 
 ---
 
-## 👨‍💻 Developer & Author
-
-Engineered by: **Eng. Fahim  Almas**
-- 🌐 **Personal Website:** [fmas.dev](https://www.fmas.dev/)
-- 🐙 **GitHub:** [@fahimalmas](https://github.com/fahimalmas)
-- Author of [Sanad AI Decision Engine](https://github.com/fahimalmas/sanad_ai_decision_engine)
-
----
-
 ## 📸 Visual Showcase & Live Demonstrations
 
 | Real-Time Live Sync (Blender 5.2 + Web Viewport) | Interactive Material & Color Inspector |
@@ -99,7 +90,8 @@ npx serve frontend
 ## 📂 Project Structure
 
 ```
-liveagent-3d/
+liveagent-blender/
+├── assets/                     # Live demo screenshots & video demonstration
 ├── frontend/
 │   ├── index.html              # Main web interface (Three.js viewport + Chat HUD)
 │   ├── app.js                  # 3D renderer, AI router, bridge client, inspector
@@ -113,16 +105,24 @@ liveagent-3d/
 │   ├── agent.py
 │   └── requirements.txt
 ├── launch_blender_bridge.bat   # One-click Windows startup script
-├── GEMINI.md                   # Agent system guidelines & rules
+├── LICENSE                     # MIT License
 └── README.md                   # Project documentation
 ```
 
 ---
 
-## 🛡️ License
+## 👨‍💻 Author & Lead Engineer
 
-Distributed under the **MIT License**. Feel free to use, modify, and build upon this architecture. Contributions and pull requests are welcome!
+**Eng. Fahim  Almas**  
+*AI Agents & Systems Architect | 3D Procedural Engineering Specialist*
+
+* 🌐 **Portfolio & Website:** [https://www.fmas.dev/](https://www.fmas.dev/)
+* 🐙 **GitHub Profile:** [@fahimalmas](https://github.com/fahimalmas)
+* ✉️ **Contact:** [fahim@fmas.dev](mailto:fahim@fmas.dev)
 
 ---
 
-Developed with precision by [Eng. Fahim Almas](https://www.fmas.dev/) • 2026
+## 📄 License
+Distributed under the MIT License. See `LICENSE` for more information.  
+Copyright (c) 2026 Fahim Almas (FAHIM ALMAS - fmas.dev). All rights reserved.
+

@@ -17,3 +17,6 @@ test_rose_blender.py
 Thumbs.db
 .vscode/
 .idea/
+
+# Internal Agent Memory & Working Logs
+PROJECT_MEMORY.md
