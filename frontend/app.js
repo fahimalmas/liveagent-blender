@@ -580,7 +580,7 @@ class PartInspectorManager {
         }
 
         if (this.syncStatus) {
-            this.syncStatus.innerText = '🟢 متزامن مع Blender 5.2';
+            this.syncStatus.innerText = '🟢 Live Sync with Blender 5.2';
             this.syncStatus.style.color = '#10b981';
         }
     }
@@ -602,7 +602,7 @@ class PartInspectorManager {
     triggerSync() {
         if (!this.selectedMesh) return;
         if (this.syncStatus) {
-            this.syncStatus.innerText = '⏳ جاري المزامنة مع بلندر...';
+            this.syncStatus.innerText = '⏳ Syncing with Blender...';
             this.syncStatus.style.color = '#f59e0b';
         }
 
@@ -658,13 +658,13 @@ if obj:
             });
             if (res.ok) {
                 if (this.syncStatus) {
-                    this.syncStatus.innerText = '✅ تم التحديث في بلندر فورياً!';
+                    this.syncStatus.innerText = '✅ Updated in Blender in real-time!';
                     this.syncStatus.style.color = '#10b981';
                 }
             }
         } catch (err) {
             if (this.syncStatus) {
-                this.syncStatus.innerText = '⚠️ تم التعديل محلياً (الجسر غير متصل)';
+                this.syncStatus.innerText = '⚠️ Modified locally (Bridge disconnected)';
                 this.syncStatus.style.color = '#94a3b8';
             }
         }
@@ -839,19 +839,19 @@ function buildDefaultStartupModel() {
 
     const statsEl = document.getElementById('objectStats');
     if (statsEl) {
-        statsEl.innerText = 'المنصة جاهزة | بانتظار أمر التصميم لبناء المجسم فورياً في بلندر';
+        statsEl.innerText = 'Platform Ready | Enter a prompt to construct 3D models in Blender';
     }
 
     camera.position.set(1.6, 1.4, 3.2);
     if (controls) controls.target.set(0, 0.3, 0);
 
     latestCleanBpyCode = `# =======================================================
-# 🚀 LiveAgent 3D - متصل وجاهز للنمذجة الحية في Blender
+# 🚀 LiveAgent 3D - Connected & Ready for Blender 5.2 LTS
 # =======================================================
 import bpy
 
-# اطلب أي تصميم في الشات (مثال: صمم طاولة قهوة، كرسي قيمنق، سيف...)
-# وسيقوم الوكيل بتوليد الكود وبناء المجسم في بلندر فورياً أمامك!
+# Type any prompt in the chat (e.g. sports car, gaming chair, rose...)
+# LiveAgent will generate clean bpy code and build it directly inside Blender!
 `;
     const codeEl = document.getElementById('generatedCodeDisplay');
     if (codeEl) codeEl.innerText = latestCleanBpyCode;
@@ -1055,7 +1055,7 @@ function renderFromBlenderScene(objects, promptTitle) {
 
     const statsEl = document.getElementById('objectStats');
     if (statsEl) {
-        statsEl.innerText = `المجسم: ${promptTitle || 'مشهد بلندر الحي'} | الكائنات الحقيقية: ${objects.length}`;
+        statsEl.innerText = `Model: ${promptTitle || 'Live Blender Scene'} | Real Meshes: ${objects.length}`;
     }
 
     return true;
@@ -1278,7 +1278,7 @@ function renderFromBpyCode(bpyCode, promptTitle) {
 
     const statsEl = document.getElementById('objectStats');
     if (statsEl) {
-        statsEl.innerText = `المجسم: ${promptTitle || 'تصميم حي'} | العناصر الهندسية: ${parsedCount}`;
+        statsEl.innerText = `Model: ${promptTitle || '3D Geometry'} | Geometric Primitives: ${parsedCount}`;
     }
 }
 
@@ -1333,280 +1333,89 @@ function initTabSwitching() {
         copyBtn.addEventListener('click', () => {
             const code = latestCleanBpyCode || document.getElementById('generatedCodeDisplay').innerText;
             navigator.clipboard.writeText(code).then(() => {
-                copyBtn.innerText = '✅ تم النسخ!';
-                setTimeout(() => copyBtn.innerText = '📋 نسخ الكود', 2000);
+                copyBtn.innerText = '✅ Copied!';
+                setTimeout(() => copyBtn.innerText = '📋 Copy Code', 2000);
             });
         });
     }
 }
 
-// 7. إدارة الشات والذكاء الاصطناعي (مُزود بمهارة Blender 5.2 LTS Master Modeler)
-const GEMINI_SYSTEM_INSTRUCTION = `أنت مهندس ووكيل ذكاء اصطناعي خبير ومحترف في النمذجة ثلاثية الأبعاد الإجرائية وبرمجة Blender Python (bpy).
-أنت تعمل حصراً مع بيئة Blender 5.2 LTS ومحرك الرندر EEVEE Next.
+// 7. AI & Chat Intelligence (Blender 5.2 LTS Master Modeler Architecture)
+const GEMINI_SYSTEM_INSTRUCTION = `You are an expert AI 3D modeling systems engineer and Blender Python (bpy) procedural architect.
+You work exclusively with Blender 5.2 LTS and the modern EEVEE Next render engine.
 
-مهمتك الأساسية:
-إنشاء نماذج ثلاثية الأبعاد فائقة الاحترافية والجمال الهندسي المترابط (Masterpiece 3D Models) باستخدام كود بايثون bpy نظيف وخالٍ من الأخطاء.
+Your core mission:
+Construct clean, physically cohesive, aesthetic, and production-ready 3D models (Masterpiece 3D Models) using error-free bpy Python code.
 
-قاعدة ذهبية صارمة لتفادي انقطاع الكود:
-ابدأ الرد فوراً بكود بايثون bpy الكامل داخل البلوك البرمجي \`\`\`python ... \`\`\` أولاً بدون أي مقدمات أو كلام قبله نهائياً. بعد انتهاء الكود، يمكنك كتابة سطرين سريعين يشرحان الأبعاد الهندسية.
+CRITICAL OUTPUT RULE:
+Start your response IMMEDIATELY with executable Python code enclosed in \`\`\`python ... \`\`\` without ANY preamble, introduction, or internal thinking process. After closing the code block, you may append a 2-line technical summary of dimensions and materials.
 
 \`\`\`python
 import bpy
 import math
-# الكود الكامل هنا
+# Complete code here
 \`\`\`
 
-قواعد النمذجة الهندسية الاحترافية الإلزامية (Pro Procedural Rules):
-1. الترابط الفيزيائي والارتفاعات المستمرة (Continuous Z-Stacking - منع الفراغات الهوائية نهائياً):
-   - لا تخمن إحداثيات عشوائية! احسب الارتفاعات بشكل تسلسلي مترابط:
-     قاعدة العجلات -> عمود المكبس يلامس القاعدة مباشرة -> المقعد يركب فوق المكبس مباشرة -> المسند يتصل بالمقعد.
-   - يمنع منعاً باتاً ترك أجزاء تطفو في الهواء (Floating/Disconnected Parts).
-2. التشكيل العضوي والانسيابية (Organic Contouring & Ergonomics):
-   - لا تستخدم مكعبات مسطحة قاسية بمفردها! استخدم التكبير والتصغير غير المتماثل (Non-uniform Scaling) والميلان الزاوي:
-     * وسائد المقاعد والمساند: كرويات مسطحة أو أسطوانات رقيقة مع ميلان زوايا math.radians(15) للجوانب (Bolsters/Wings).
-     * أضف تنعيم ناعم: bpy.ops.object.shade_smooth() لكل جزء.
-     * أضف معدّل الحواف الناعمة (Bevel Modifier) للأجزاء الصلبة والمعدنية لإضفاء لمعان واقعي:
-       bev = obj.modifiers.new(name="Bevel", type='BEVEL')
-       bev.width = 0.015
-       bev.segments = 2
-3. التكرار الرياضي والتناظر (Mathematical Loops):
-   - في الأجزاء المتكررة (مثل أذرع النجمة الخماسية، العجلات، البتلات، التروس، الأرجل):
-     استخدم حلقة تكرار رياضية بحساب الزوايا:
-     for i in range(5):
-         angle = i * (2 * math.pi / 5)
+Strict Procedural Modeling Rules (Blender 5.2 LTS):
+1. Continuous Z-Stacking & Zero-Gap Cohesion:
+   - Calculate coordinates deterministically. Connect components sequentially without leaving floating or disconnected parts.
+   - Example: wheel base -> piston shaft rests on base -> seat rests on piston -> backrest attaches to seat.
+2. Organic Contouring & Ergonomics:
+   - Avoid flat primitive boxes alone. Use non-uniform scaling, beveled edges, and smooth shading:
+     bpy.ops.object.shade_smooth()
+   - Add Bevel Modifier for hard-surface realism:
+     bev = obj.modifiers.new(name="Bevel", type='BEVEL')
+     bev.width = 0.015
+     bev.segments = 2
+3. Mathematical Symmetry & Loops:
+   - For repeated components (wheels, pedals, petals, legs), use circular loops:
+     for i in range(N):
+         angle = i * (2 * math.pi / N)
          lx = radius * math.cos(angle)
          ly = radius * math.sin(angle)
-4. شجرة الربط الهرمي (Hierarchical Parenting):
-   - اربط الأجزاء التابعة بجسمها الرئيسي لمنع التفكك:
-     child_obj.parent = parent_obj
-5. الخامات الاحترافية المتباينة لـ Blender 5.2 LTS:
-   - أنشئ دائماً باليت خامات متناسقة ثنائية أو ثلاثية الألوان (لون أساسي داكن/جلدي، لون رياضي نيون أو براق Accent، ومعدن كروم Piston/Frame).
-   - قواعد خامات Blender 5.2 الصارمة:
-     * ممنوع نهائياً material.shadow_method.
-     * ممنوع خصائص eevee القديمة مثل use_bloom أو use_ssr.
-     * في Principled BSDF:
-       - inputs['Base Color'].default_value = (r, g, b, 1.0)
-       - inputs['Roughness'].default_value = 0.3
-       - inputs['Metallic'].default_value = 1.0 (للمعادن)
-       - inputs['Transmission Weight'].default_value = 1.0 (للزجاج)
-       - inputs['Specular IOR Level'].default_value = 0.5
-       - للتوهج النيوني: inputs['Emission Color'].default_value = (r, g, b, 1.0) و inputs['Emission Strength'].default_value = 2.0
-6. نمط الكائنات فقط (Object Mode Only):
-   - ابدأ الكود بمسح الكائنات القديمة:
-     bpy.ops.object.select_all(action='SELECT')
-     bpy.ops.object.delete(use_global=False)
-   - ممنوع استخدام نمط التعديل Edit Mode أو extrude.
+4. Hierarchical Parenting:
+   - Parent child parts to primary structures to maintain cohesion: child_obj.parent = parent_obj
+5. Modern Blender 5.2 Principled BSDF Standard:
+   - NEVER set material.shadow_method (removed in Blender 4.2+ / 5.2+).
+   - NEVER use obsolete EEVEE settings like use_bloom or use_ssr.
+   - Use standard Blender 5.2 socket names:
+     * inputs['Base Color'].default_value = (r, g, b, 1.0)
+     * inputs['Roughness'].default_value = 0.3
+     * inputs['Metallic'].default_value = 1.0 (for metals)
+     * inputs['Transmission Weight'].default_value = 1.0 (for glass/fluids, NOT 'Transmission')
+     * inputs['Specular IOR Level'].default_value = 0.5 (NOT 'Specular')
+     * inputs['Subsurface Weight'].default_value = 0.35 (for skin/petals)
+     * inputs['Sheen Weight'].default_value = 0.85 (for velvet/fabrics)
+     * For glowing neon: inputs['Emission Color'].default_value = (r, g, b, 1.0) and inputs['Emission Strength'].default_value = 2.0
+6. Object Mode Only:
+   - Always clear old objects cleanly:
+     for obj in list(bpy.data.objects): bpy.data.objects.remove(obj, do_unlink=True)
+     for mesh in list(bpy.data.meshes): bpy.data.meshes.remove(mesh, do_unlink=True)
+   - Never use Edit Mode or edit mode extrusions.
+7. Multi-Component Completeness:
+   - Always produce complete, multi-part models with functional anatomy (e.g. car chassis + cabin + 4 wheels + headlights + spoiler; glasses with dual rims + glass lenses + curved bridge + temple arms).
+8. Studio Lighting:
+   - Always add a Sun light so materials and geometry render vibrantly in Blender:
+     sun_data = bpy.data.lights.new(name="Sun_Light", type='SUN')
+     sun_data.energy = 4.5
+     sun_obj = bpy.data.objects.new(name="Sun_Light", object_data=sun_data)
+     bpy.context.collection.objects.link(sun_obj)
+     sun_obj.rotation_euler = (math.radians(45), math.radians(25), math.radians(45))
+9. Output code strictly inside \`\`\`python ... \`\`\`.`;
 
-7. قانون الاكتمال التشريحي والهيكلي الإلزامي (Mandatory Multi-Component Completeness Law):
-   - ممنوع منعاً باتاً تحت أي ظرف إنتاج مجسم مبتور أو كتلة وحيدة مفردة (No Single-Primitive or Truncated Models)!
-   - إذا طُلب مجسم مركب، أنت مُلزم هندسياً ببناء كامل أركانه وأجزائه الوظيفية دون استثناء:
-      * للسيارات الرياضية والمركبات (Cars & Supercars):
-        1. الشاسيه والهيكل الرئيسي الانسيابي (Chassis & Aerodynamic Body):
-           # الشاسيه الأساسي بعرض 1.45 وعمق 3.8:
-           bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0, 0, 0.38))
-           chassis = bpy.context.active_object
-           chassis.name = "Chassis_Main"
-           chassis.scale = (1.45, 3.8, 0.28)
-           # أنف أمامي منحدر انسيابي:
-           bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0, 1.6, 0.34))
-           nose = bpy.context.active_object
-           nose.name = "Chassis_Nose"
-           nose.scale = (1.35, 1.1, 0.18)
-           nose.rotation_euler = (math.radians(-7), 0, 0)
-           # مشتت هواء أمامي سفلي (Carbon Splitter):
-           bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0, 2.05, 0.20))
-           splitter = bpy.context.active_object
-           splitter.scale = (1.42, 0.4, 0.04)
-        2. الكابينة والزجاج الرياضي (Cockpit & Tinted Canopy):
-           bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0, -0.15, 0.65))
-           cabin = bpy.context.active_object
-           cabin.name = "Cabin_Glass"
-           cabin.scale = (1.08, 1.7, 0.32)
-           cabin.rotation_euler = (math.radians(3), 0, 0)
-           # سقف الكابينة الرياضي:
-           bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0, -0.15, 0.82))
-           roof = bpy.context.active_object
-           roof.name = "Cabin_Roof"
-           roof.scale = (0.95, 1.2, 0.06)
-        3. العجلات الأربع والجنوط متصلة بدون أي فجوة (4 Connected Wheels & Rims Loop):
-           # نصف عرض الشاسيه 0.725 وعمق العجلة 0.22، لذا تلامس الشاسيه تماماً عند sx = +-0.78 بدون أي طفو في الهواء!
-           for sx in (-0.78, 0.78):
-               for sy in (-1.25, 1.25):
-                   bpy.ops.mesh.primitive_cylinder_add(radius=0.36, depth=0.22, location=(sx, sy, 0.36), rotation=(0, math.radians(90), 0))
-                   wh = bpy.context.active_object
-                   wh.name = f"Wheel_{'R' if sx>0 else 'L'}_{'F' if sy>0 else 'R'}"
-                   wh.data.materials.append(mat_tire)
-                   # جنط داخلي معدني بارز
-                   bpy.ops.mesh.primitive_cylinder_add(radius=0.24, depth=0.24, location=(sx + (0.02 if sx>0 else -0.02), sy, 0.36), rotation=(0, math.radians(90), 0))
-                   rm = bpy.context.active_object
-                   rm.name = f"Rim_{'R' if sx>0 else 'L'}_{'F' if sy>0 else 'R'}"
-                   rm.data.materials.append(mat_rim)
-                   rm.parent = wh
-                   wh.parent = CTRL_Master
-                   # تحريك الدوران المستمر للعجلات
-                   wh.animation_data_clear()
-                   wh.keyframe_insert(data_path="rotation_euler", frame=1)
-                   wh.rotation_euler.x += math.radians(720)
-                   wh.keyframe_insert(data_path="rotation_euler", frame=120)
-        4. المصابيح الأمامية والخلفية المضيئة بخامة Emission:
-           for sx in (-0.52, 0.52):
-               bpy.ops.mesh.primitive_cylinder_add(radius=0.08, depth=0.12, location=(sx, 1.98, 0.38), rotation=(math.radians(85), 0, 0))
-               hl = bpy.context.active_object
-               hl.data.materials.append(mat_headlight)
-               hl.parent = CTRL_Master
-        5. الجناح الخلفي الرياضي (Rear Spoiler):
-           bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0, -1.82, 0.72))
-           spoiler = bpy.context.active_object
-           spoiler.scale = (1.5, 0.28, 0.04)
-           spoiler.data.materials.append(mat_carbon)
-           spoiler.parent = CTRL_Master
-      * للدراجات النارية والمركبات ثنائية العجلات (Motorcycles & Bicycles - Single-Track Inline):
-        قاعدة ذهبية قطعية: العجلتان تقعان حصراً على خط المنتصف الطولي X=0 (عجلة أمامية Y>0 وعجلة خلفية Y<0). يمنع منعاً باتاً وضع العجلات على جانبي X فتتحول لدامبلز أثقال!
-        1. العجلة الخلفية والأمامية (Inline Wheels):
-           # العجلة الخلفية:
-           bpy.ops.mesh.primitive_cylinder_add(radius=0.38, depth=0.14, location=(0, -0.95, 0.38), rotation=(0, math.radians(90), 0))
-           w_rear = bpy.context.active_object
-           w_rear.name = "Wheel_Rear"
-           w_rear.data.materials.append(mat_tire)
-           # العجلة الأمامية:
-           bpy.ops.mesh.primitive_cylinder_add(radius=0.38, depth=0.14, location=(0, 0.95, 0.38), rotation=(0, math.radians(90), 0))
-           w_front = bpy.context.active_object
-           w_front.name = "Wheel_Front"
-           w_front.data.materials.append(mat_tire)
-        2. الشوكة الأمامية المائلة للتوجيه (Front Fork):
-           for sx in (-0.11, 0.11):
-               bpy.ops.mesh.primitive_cylinder_add(radius=0.025, depth=0.85, location=(sx, 0.85, 0.65), rotation=(math.radians(-24), 0, 0))
-               fork = bpy.context.active_object
-               fork.data.materials.append(mat_chrome)
-               fork.parent = CTRL_Master
-        3. المقود الأفقي (Handlebars):
-           bpy.ops.mesh.primitive_cylinder_add(radius=0.022, depth=0.75, location=(0, 0.70, 1.05), rotation=(0, math.radians(90), 0))
-           # مقبضان جانبيان:
-           for sx in (-0.36, 0.36):
-               bpy.ops.mesh.primitive_cylinder_add(radius=0.028, depth=0.12, location=(sx, 0.70, 1.05), rotation=(0, math.radians(90), 0))
-        4. شاسيه الهيكل الأوسط وخزان الوقود (Engine & Fuel Tank):
-           # كتلة المحرك السفلية بين العجلتين:
-           bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0, 0, 0.45))
-           engine = bpy.context.active_object
-           engine.scale = (0.35, 0.75, 0.4)
-           engine.data.materials.append(mat_engine)
-           # خزان الوقود الانسيابي بالأعلى:
-           bpy.ops.mesh.primitive_cylinder_add(radius=0.18, depth=0.6, location=(0, 0.35, 0.85), rotation=(math.radians(90), 0, 0))
-           # المقعد الجلدي بالوسط:
-           bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0, -0.25, 0.75))
-           seat = bpy.context.active_object
-           seat.scale = (0.28, 0.5, 0.08)
-           seat.data.materials.append(mat_leather)
-        5. المصباح الأمامي LED والعادم الكرومي:
-           bpy.ops.mesh.primitive_cylinder_add(radius=0.09, depth=0.1, location=(0, 1.05, 0.88), rotation=(math.radians(90), 0, 0))
-      * للأثاث والمكاتب والكراسي (Furniture, Desks & Chairs - 4-Legged Stacking):
-        1. الأرجل الأربع المتناظرة: for sx in (-0.5, 0.5): for sy in (-0.4, 0.4): أسطوانات عمودية.
-        2. سطح الطاولة أو مقعد الكرسي يركب فيزيائياً فوق قمة الأرجل مباشرة (Z_top = Z_leg_top).
-        3. مسند الظهر يرتفع رأسياً من الحافة الخلفية للمقعد.
-      * للأزهار والنباتات في المزهريات (Flowers & Vases):
-       إذا طُلب "وردة في مزهرية"، يجب بناء المشهد كاملاً:
-       1. المزهرية الزجاجية المجوفة (Cylinder / Cone مع Solidify وخامة Transmission=1.0).
-       2. قرص الماء الفيزيائي داخل قاع المزهرية.
-       3. ساق الزهرة الأسطوانية الخضراء تنبثق من داخل المزهرية للأعلى.
-       4. أوراق وسيقان فرعية مائلة.
-       5. كأس الزهرة وسبلاتها الخضراء.
-       6. بتلات الوردة الحلزونية (Rose Petals) فوق الساق مباشرة عند قمة المشهد! (ممنوع توليد المزهرية وحدها فارغة).
-      * للنظارات الشمسية والإكسسوارات (Modern Designer Eyewear & Sunglasses):
-        يجب بناء النظارة بهندسة احترافية فائقة النعومة ومترابطة فيزيائياً:
-        1. إطارا العدستين الحلقيان (L & R Smooth Torus Frames):
-           for sx in (-0.85, 0.85):
-               bpy.ops.mesh.primitive_torus_add(major_radius=0.72, minor_radius=0.10, location=(sx, 0, 0), rotation=(math.radians(90), 0, 0))
-        2. العدستان الزجاجيتان العاكستان (Deep Blue Transmission Lenses):
-           for sx in (-0.85, 0.85):
-               bpy.ops.mesh.primitive_cylinder_add(radius=0.70, depth=0.035, location=(sx, 0.005, 0), rotation=(math.radians(90), 0, 0))
-        3. الجسر الأنفي الذهبي المقوس الأوسط الرابط بين الإطارين (Curved Golden Bridge):
-           bpy.ops.mesh.primitive_torus_add(major_radius=0.22, minor_radius=0.045, location=(0, 0.02, 0.32), rotation=(0, 0, 0))
-           bridge = bpy.context.active_object
-           bridge.scale = (0.9, 0.45, 0.45)
-        4. المفاصل الذهبية والأذرع الجانبية الممتدة للخلف بانحناءة الأذن:
-           for sx in (-1.55, 1.55):
-               bpy.ops.mesh.primitive_cylinder_add(radius=0.05, depth=0.12, location=(sx, -0.05, 0.22), rotation=(0, math.radians(90), 0))
-               bpy.ops.mesh.primitive_cube_add(size=1.0, location=(sx, -0.95, 0.22))
-               bpy.context.active_object.scale = (0.045, 1.8, 0.065)
-               bpy.ops.mesh.primitive_cylinder_add(radius=0.04, depth=0.42, location=(sx, -1.9, 0.06), rotation=(math.radians(40), 0, 0))
-     * للروبوتات والشخصيات (Robots & Characters):
-       الجذع + الرأس بتفاصيل العيون المضيئة + الذراعان والمفاصل + الساقان والقواعد.
-     * للمركبات الفضائية والمقاتلات (Spaceships & Starfighters):
-       1. جسم السفينة المركزي (Fuselage): أسطوانة ممتدة أفقياً على محور Y وليس Z!
-          bpy.ops.mesh.primitive_cylinder_add(radius=0.45, depth=3.8, location=(0, 0, 0.5), rotation=(math.radians(90), 0, 0))
-          # مخروط الأنف الأمامي متصل بالهيكل مباشرة:
-          bpy.ops.mesh.primitive_cone_add(radius1=0.45, depth=1.5, location=(0, 2.65, 0.5), rotation=(math.radians(-90), 0, 0))
-       2. قمرة القيادة الزجاجية (Canopy): تجلس فوق ظهر الهيكل مباشرة عند location=(0, 0.5, 0.82) مع تحجيم scale=(0.34, 1.15, 0.26).
-       3. الأجنحة النفاثة المتصلة مباشرة بالهيكل (ممنوع ترك فراغات هوائية عشوائية!):
-          for sx in (-1, 1):
-              # الجناح يلامس الهيكل ويبدأ من X = sx * 1.45 (حيث نصف قطر الهيكل 0.45 ونصف عرض الجناح 1.0)
-              bpy.ops.mesh.primitive_cube_add(size=1.0, location=(sx * 1.45, -0.3, 0.5))
-              wing = bpy.context.active_object
-              wing.scale = (1.9, 1.3, 0.06)
-              # مدافع الليزر مثبتة على أطراف الأجنحة
-              bpy.ops.mesh.primitive_cylinder_add(radius=0.045, depth=1.8, location=(sx * 2.25, 0.2, 0.5), rotation=(math.radians(90), 0, 0))
-       4. المحركات النفاثة التوربينية المزدوجة بالخلف:
-          for sx in (-0.55, 0.55):
-              bpy.ops.mesh.primitive_cylinder_add(radius=0.28, depth=1.3, location=(sx, -2.1, 0.5), rotation=(math.radians(90), 0, 0))
-              # فوهة عادم متوهجة بخامة Emission (Engine_Glow)
-              bpy.ops.mesh.primitive_cylinder_add(radius=0.23, depth=0.15, location=(sx, -2.8, 0.5), rotation=(math.radians(90), 0, 0))
-
-8. الأواني والكؤوس والسوائل المجوفة (Hollow Glassware & Fluid Containers):
-   - لأي كأس، فنجان، زجاجة، أو وعاء مفتوح: استخدم primitive_cone_add أو primitive_cylinder_add مع end_fill_type='NOTHING'، ثم امنحه سمك جدار حقيقي بمعدل Solidify (thickness=0.004) وقاعدة بالأسفل.
-   - السوائل والعصائر توضع فيزيائياً *داخل* الكوب وليس فوقه: تبدأ فوق قاع الكأس مباشرة، وبارتفاع 75% من عمق الكأس، وبنصف قطر أقل قليلاً من جدار الكأس لتجنب أي طفو عشوائي.
-
-9. الكائنات النباتية والزهور العضوية (Botanical Flowers & Fibonacci Phyllotaxis):
-   - لأي وردة أو زهرة: ممنوع استخدام الألواح المسطحة، وممنوع جعل البتلات كرات سميكة منتفخة كحبات الطماطم!
-   - ابنِ البتلات رقيقة ومنسابة باستخدام حلقة حلزونية رياضية تعتمد الزاوية الذهبية (Golden Angle Phyllotaxis):
-     GOLDEN_ANGLE = math.radians(137.5077)
-     for i in range(26):
-         progress = i / 26.0
-         r_dist = 0.012 + (0.095 * math.pow(progress, 0.75))
-         theta = i * GOLDEN_ANGLE
-         px = r_dist * math.cos(theta)
-         py = r_dist * math.sin(theta)
-         pz = 0.06 + (0.05 * (1.0 - progress)) - (0.025 * math.pow(progress, 2))
-         bpy.ops.mesh.primitive_uv_sphere_add(radius=1.0, location=(px, py, pz))
-         petal = bpy.context.active_object
-         # بتلة رقيقة قشرية بيضاوية ومقعرة (وليست كرة منتفخة):
-         petal.scale = (0.024 + 0.065*progress, 0.034 + 0.08*progress, 0.006 + 0.010*progress)
-         tilt = math.radians(10 + 68 * math.pow(progress, 1.2))
-         petal.rotation_euler = (tilt * math.sin(theta), -tilt * math.cos(theta), theta + math.radians(75))
-         bpy.ops.object.shade_smooth()
-   - أضف دائماً التشريح النباتي الكامل: كأسية مخروطية سفلية، 5 سبلات خضراء، ساق أسطوانية خضراء وأوراق جانبية.
-
-10. الإضاءة والتجسيم في بلندر (Studio Lighting):
-    - أضف دائماً في نهاية الكود مصدر إضاءة شمسي لإنارة المجسم وخاماته في بلندر بوضوح دون أن يبدو معتماً:
-      sun_data = bpy.data.lights.new(name="Sun_Light", type='SUN')
-      sun_data.energy = 4.5
-      sun_obj = bpy.data.objects.new(name="Sun_Light", object_data=sun_data)
-      bpy.context.collection.objects.link(sun_obj)
-      sun_obj.rotation_euler = (math.radians(45), math.radians(25), math.radians(45))
-
-11. وحدة التحكم المركزية والمجموعات (Master Empty Rig & Collections):
-    - لا تترك المجسمات مبعثرة؛ أنشئ كائن تحكم فارغ رئيسي: CTRL_Master = bpy.data.objects.new("CTRL_Master", None)، واربط به كل الأجزاء الأساسية ليكون قابلاً للتحريك وتغيير الحجم كوحدة متماسكة.
-
-12. التحريك التلقائي للمركبات والآليات (Automated Keyframe Animation):
-    - لأي مركبة فضائية، سيارة، روبوت، ساعة، أو آلية بأجزاء متحركة:
-      أنشئ مفصل تحكم فارغ (Hinge/Pivot Empty) أو استخدم العجلات وسجل فريمات حركة انسيابية:
-      hinge.keyframe_insert(data_path="rotation_euler", frame=1)
-      hinge.rotation_euler.y = math.radians(28)
-      hinge.keyframe_insert(data_path="rotation_euler", frame=60)
-   - ضع الكود فقط داخل \`\`\`python ... \`\`\` دون أي نصوص إضافية في نهايته.`;
-
-// تهيئة وتكوين مزودي الذكاء الاصطناعي المتعددين (Multi-Provider Support)
+// Multi-Provider AI Engine Configuration
 const PROVIDERS = {
     groq: {
-        name: "Groq Cloud (14,400 طلب/يوم مجاناً)",
+        name: "Groq Cloud (14,400 req/day free)",
         badgeIcon: "⚡",
         endpoint: "https://api.groq.com/openai/v1/chat/completions",
-        keyPlaceholder: "الصق مفتاح Groq هنا: gsk_...",
-        keyHint: `🔑 احصل على مفتاحك المجاني فوراً وبدون بطاقة بنكية من <a href="https://console.groq.com/keys" target="_blank" style="color:#60a5fa;text-decoration:underline;">Groq Console</a> (14,400 طلب يومياً مجاناً!).`,
+        keyPlaceholder: "Paste Groq API key here: gsk_...",
+        keyHint: `🔑 Get your free API key instantly without credit card from <a href="https://console.groq.com/keys" target="_blank" style="color:#60a5fa;text-decoration:underline;">Groq Console</a> (14,400 requests/day free!).`,
         models: [
-            { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B Versatile (👑 الأفضل للبرمجة وسريع - 12K TPM)" },
-            { id: "llama-3.1-8b-instant", name: "Llama 3.1 8B Instant (⚡ استجابة فورية 20K TPM - مجاني)" },
-            { id: "openai/gpt-oss-120b", name: "OpenAI GPT-OSS 120B (عملاق المنطق)" },
-            { id: "qwen/qwen3.8-27b", name: "Qwen 3.8 27B (مجاني - سقف 800 توكن)" }
+            { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B Versatile (👑 Best for bpy code - 12K TPM)" },
+            { id: "llama-3.1-8b-instant", name: "Llama 3.1 8B Instant (⚡ Instant response 20K TPM - Free)" },
+            { id: "openai/gpt-oss-120b", name: "OpenAI GPT-OSS 120B (High Reasoning)" },
+            { id: "qwen/qwen3.8-27b", name: "Qwen 3.8 27B (Free - 800 token cap)" }
         ],
         defaultModel: "llama-3.3-70b-versatile"
     },
@@ -1614,12 +1423,12 @@ const PROVIDERS = {
         name: "Google Gemini",
         badgeIcon: "🌟",
         endpoint: "https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent?key={KEY}",
-        keyPlaceholder: "الصق مفتاح Google هنا: AIzaSy...",
-        keyHint: `🔑 احصل على مفتاح Google المجاني من <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#60a5fa;text-decoration:underline;">Google AI Studio</a>. (اختر <b>Gemini 2.5 Flash</b> لسرعة وتوافق فائقين).`,
+        keyPlaceholder: "Paste Google API key here: AIzaSy...",
+        keyHint: `🔑 Get your free Google API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#60a5fa;text-decoration:underline;">Google AI Studio</a>. (Select <b>Gemini 2.5 Flash</b> for ultra speed and accuracy).`,
         models: [
-            { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash (⚡ الأحدث والأسرع - مجاني 1,500 طلب/يوم)" },
-            { id: "gemini-2.0-flash", name: "Gemini 2.0 Flash (🟢 مستقر وسريع - مجاني)" },
-            { id: "gemini-1.5-flash-latest", name: "Gemini 1.5 Flash Latest (🟢 مجاني 1500 طلب/يوم)" }
+            { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash (⚡ Latest & fastest - Free 1,500 req/day)" },
+            { id: "gemini-2.0-flash", name: "Gemini 2.0 Flash (🟢 Stable & fast - Free)" },
+            { id: "gemini-1.5-flash-latest", name: "Gemini 1.5 Flash Latest (🟢 Free 1,500 req/day)" }
         ],
         defaultModel: "gemini-2.5-flash"
     },
@@ -1627,24 +1436,24 @@ const PROVIDERS = {
         name: "OpenRouter",
         badgeIcon: "🌐",
         endpoint: "https://openrouter.ai/api/v1/chat/completions",
-        keyPlaceholder: "الصق مفتاح OpenRouter هنا: sk-or-v1-...",
-        keyHint: `🔑 احصل على مفتاح OpenRouter من <a href="https://openrouter.ai/keys" target="_blank" style="color:#60a5fa;text-decoration:underline;">OpenRouter Keys</a> (يتطلب شحن رصيد للنماذج المدفوعة).`,
+        keyPlaceholder: "Paste OpenRouter key here: sk-or-v1-...",
+        keyHint: `🔑 Get your key from <a href="https://openrouter.ai/keys" target="_blank" style="color:#60a5fa;text-decoration:underline;">OpenRouter Keys</a> (Credit required for paid models).`,
         models: [
-            { id: "anthropic/claude-3.5-sonnet", name: "Claude 3.5 Sonnet (🧠 محرك Terra - يتطلب رصيد)" },
-            { id: "anthropic/claude-3.7-sonnet", name: "Claude 3.7 Sonnet (🚀 الأحدث - يتطلب رصيد)" },
-            { id: "openai/gpt-4o", name: "OpenAI GPT-4o (يتطلب رصيد)" }
+            { id: "anthropic/claude-3.5-sonnet", name: "Claude 3.5 Sonnet (🧠 Terra Engine - Paid)" },
+            { id: "anthropic/claude-3.7-sonnet", name: "Claude 3.7 Sonnet (🚀 Latest - Paid)" },
+            { id: "openai/gpt-4o", name: "OpenAI GPT-4o (Paid)" }
         ],
         defaultModel: "anthropic/claude-3.5-sonnet"
     },
     anthropic: {
-        name: "Anthropic Claude (محرك Terra)",
+        name: "Anthropic Claude (Terra Engine)",
         badgeIcon: "🧠",
         endpoint: "https://api.anthropic.com/v1/messages",
-        keyPlaceholder: "الصق مفتاح Anthropic هنا: sk-ant-...",
-        keyHint: `🔑 احصل على مفتاحك من <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#60a5fa;text-decoration:underline;">Anthropic Console</a> (يتطلب شحن رصيد).`,
+        keyPlaceholder: "Paste Anthropic key here: sk-ant-...",
+        keyHint: `🔑 Get your key from <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#60a5fa;text-decoration:underline;">Anthropic Console</a> (Credit required).`,
         models: [
-            { id: "claude-3-5-sonnet-20241022", name: "Claude 3.5 Sonnet (👑 محرك Terra - يتطلب رصيد)" },
-            { id: "claude-3-7-sonnet-20250219", name: "Claude 3.7 Sonnet (🚀 الأحدث - يتطلب رصيد)" }
+            { id: "claude-3-5-sonnet-20241022", name: "Claude 3.5 Sonnet (👑 Terra Engine - Paid)" },
+            { id: "claude-3-7-sonnet-20250219", name: "Claude 3.7 Sonnet (🚀 Latest - Paid)" }
         ],
         defaultModel: "claude-3-5-sonnet-20241022"
     }
@@ -1676,7 +1485,7 @@ async function callAIEngine(promptText) {
     const apiKey = getActiveApiKey();
 
     if (!apiKey || apiKey.trim().length < 5) {
-        throw new Error(`يرجى إدخال مفتاح API لمزود (${provider.name}) من الإعدادات ⚙️ أعلى الشاشة للمتابعة.`);
+        throw new Error(`Please enter an API key for (${provider.name}) in Settings ⚙️ at the top of the screen to proceed.`);
     }
 
     if (providerKey === 'gemini') {
@@ -1698,7 +1507,7 @@ async function callAIEngine(promptText) {
                 {
                     role: "user",
                     parts: [
-                        { text: `طلب المستخدم الهندسي: ${promptText}\n\nتعليمات صارمة: ابدأ الرد فوراً بكود بايثون كامل داخل \`\`\`python ... \`\`\` بدون أي مقدمات أو تفكير مسبق.` }
+                        { text: `User 3D Modeling Request: ${promptText}\n\nSTRICT INSTRUCTION: Output complete Python bpy code immediately inside \`\`\`python ... \`\`\` without any preamble or thinking text.` }
                     ]
                 }
             ],
@@ -1713,7 +1522,7 @@ async function callAIEngine(promptText) {
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error?.message || `فشل الاتصال بـ Google API (${response.status})`);
+            throw new Error(errorData.error?.message || `Failed to connect to Google API (${response.status})`);
         }
 
         const data = await response.json();
@@ -1738,7 +1547,7 @@ async function callAIEngine(promptText) {
                 max_tokens: 3000,
                 system: GEMINI_SYSTEM_INSTRUCTION,
                 messages: [
-                    { role: "user", content: `طلب المستخدم: ${promptText}` }
+                    { role: "user", content: `User 3D Request: ${promptText}` }
                 ],
                 temperature: 0.1
             })
@@ -1746,13 +1555,13 @@ async function callAIEngine(promptText) {
 
         if (!response.ok) {
             const err = await response.json().catch(() => ({}));
-            throw new Error(err.error?.message || `فشل الاتصال بـ Anthropic (${response.status})`);
+            throw new Error(err.error?.message || `Failed to connect to Anthropic (${response.status})`);
         }
 
         const data = await response.json();
         return data.content?.[0]?.text || "";
     } else {
-        // Groq أو OpenRouter
+        // Groq or OpenRouter
         let tokenLimit = 2500;
         if (providerKey === 'groq' && modelName.includes('qwen')) {
             tokenLimit = 800; // Qwen on Groq free tier limit
@@ -1767,7 +1576,7 @@ async function callAIEngine(promptText) {
                 model: modelName,
                 messages: [
                     { role: "system", content: "You are an expert 3D Blender Python (bpy) assistant. Output ONLY executable Python code inside ```python ... ``` without any preamble, explanation, or thinking process." },
-                    { role: "user", content: `${GEMINI_SYSTEM_INSTRUCTION}\n\nطلب المستخدم: ${promptText}` }
+                    { role: "user", content: `${GEMINI_SYSTEM_INSTRUCTION}\n\nUser Request: ${promptText}` }
                 ],
                 temperature: 0.1,
                 max_tokens: tokenLimit
@@ -1776,7 +1585,7 @@ async function callAIEngine(promptText) {
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            const msg = errorData.error?.message || errorData.message || `فشل الاتصال بـ ${provider.name} (${response.status})`;
+            const msg = errorData.error?.message || errorData.message || `Failed to connect to ${provider.name} (${response.status})`;
             throw new Error(msg);
         }
 
@@ -1843,13 +1652,13 @@ async function executeUserCommand(promptText) {
 
     const assistantMsgId = appendThinkingMessage();
 
-    // إذا كان مفتاح الـ API مدخلاً
+    // If API key is provided
     if (apiKey && apiKey.trim().length > 5) {
-        updateThinkingStep(assistantMsgId, `🧠 جاري استدعاء نموذج ${model} عبر ${provider.name}...`);
+        updateThinkingStep(assistantMsgId, `🧠 Calling model ${model} via ${provider.name}...`);
         try {
             let aiResponse = await callAIEngine(promptText);
             
-            // استخراج وتطهير كود بايثون
+            // Extract and clean bpy code
             let cleanBpy = extractAndCleanPythonCode(aiResponse);
             let hasValidCode = cleanBpy && (cleanBpy.includes('bpy.') || cleanBpy.includes('primitive_'));
 
@@ -1859,7 +1668,7 @@ async function executeUserCommand(promptText) {
                 renderFromBpyCode(cleanBpy, promptText);
                 sendCurrentCodeToBlender(cleanBpy, promptText);
             } else {
-                // استدعاء البلوبرنت المعتمد والمضمون إذا انقطع الكود من الموديل
+                // Call certified blueprint fallback if code was truncated
                 const fallback = getCertifiedBlueprint(promptText);
                 if (fallback) {
                     cleanBpy = fallback.code;
@@ -1878,7 +1687,7 @@ async function executeUserCommand(promptText) {
                 msgEl.querySelector('.bubble').innerHTML = formattedResponse;
             }
         } catch (err) {
-            // محاولة استخدام البلوبرنت المعتمد حتى لو حدث خطأ في مفتاح API أو الرصيد
+            // Attempt to use certified blueprint even if API error occurred
             const fallback = getCertifiedBlueprint(promptText);
             const msgEl = document.getElementById(assistantMsgId);
             if (fallback && msgEl) {
@@ -1889,9 +1698,9 @@ async function executeUserCommand(promptText) {
                 msgEl.querySelector('.bubble').innerHTML = formatMarkdownResponse(fallback.description, true);
             } else if (msgEl) {
                 msgEl.querySelector('.bubble').innerHTML = `
-                    <p style="color: #ef4444;">⚠️ حدث خطأ أثناء الاتصال بمفتاح API:</p>
+                    <p style="color: #ef4444;">⚠️ API Connection Error:</p>
                     <p style="font-size: 0.85rem; color: var(--text-secondary);">${escapeHtml(err.message)}</p>
-                    <button class="chip" onclick="document.getElementById('settingsBtn').click()" style="margin-top: 8px;">⚙️ تعديل مفتاح API في الإعدادات</button>
+                    <button class="chip" onclick="document.getElementById('settingsBtn').click()" style="margin-top: 8px;">⚙️ Configure API Key in Settings</button>
                 `;
             }
         }
@@ -1900,9 +1709,9 @@ async function executeUserCommand(promptText) {
         return;
     }
 
-    // 2. إذا لم يكن هناك مفتاح API بعد
+    // 2. If no API key configured yet (instant blueprint fallback)
     setTimeout(() => {
-        updateThinkingStep(assistantMsgId, '⚙️ جاري صياغة كود bpy وتحديد الأبعاد والمعدلات...');
+        updateThinkingStep(assistantMsgId, '⚙️ Formulating bpy code, dimensions and modifiers...');
     }, 300);
 
     setTimeout(() => {
@@ -1911,20 +1720,20 @@ async function executeUserCommand(promptText) {
 }
 
 /**
- * بنك النماذج الهندسية المعتمدة والمبنية يدوياً بدقة فيزيائية 100% لـ Blender 5.2
+ * Certified Master Procedural 3D Blueprints for Blender 5.2 LTS
  */
 function getCertifiedBlueprint(promptText) {
     const lower = (promptText || '').toLowerCase();
     
-    // 1. وردة جورية حمراء واقعية في مزهرية
-    if (lower.includes('ورد') || lower.includes('rose') || lower.includes('زهر') || lower.includes('مزهر')) {
+    // 1. Master Velvet Damask Red Rose in Glass Vase
+    if (lower.includes('ورد') || lower.includes('rose') || lower.includes('flower') || lower.includes('petal') || lower.includes('vase')) {
         return {
-            description: `تم بناء <strong>وردة جورية حمراء مخملية فائقة الواقعية (Master Velvet Rose)</strong> بنجاح!
+            description: `Constructed <strong>Master Velvet Damask Rose in Glass Vase</strong> successfully!
 <ul>
-  <li>خامة بتلات مخملية قرمزية عميقة مدعمة بتشتت الضوء الباطني (Subsurface Scattering) وبريق المخمل (Sheen).</li>
-  <li>هندسة بتلات حلزونية ذهبية (Fibonacci Spiral) بـ 28 بتلة متدرجة من القلب المضموم للأطراف المفتوحة.</li>
-  <li>قطرات ندى مائية كريستالية (Micro Dew Drops) بنفاذية ضوئية متناثرة على سطح البتلات.</li>
-  <li>تشريح نباتي كامل: كأس الوردة (Calyx)، 5 سبلات مدببة (Sepals)، وساق شوكية مع مزهرية زجاجية وماء.</li>
+  <li>Velvet crimson red petals shader featuring Subsurface Scattering (SSS) and Sheen.</li>
+  <li>28-petal Fibonacci golden spiral structure transitioning from wrapped core to blooming petals.</li>
+  <li>Micro physical water dew drops scattered across petal surfaces.</li>
+  <li>Complete botanical anatomy: calyx, 5 sepals, thorny stem, and crystal glass vase with water.</li>
 </ul>`,
             code: `import bpy
 import math
@@ -2063,15 +1872,15 @@ print("✅ تم بناء الوردة الجورية المخملية فائقة
         };
     }
 
-    // 2. نظارة شمسية عصرية فاخرة بإطار توروس دائري وعدسات زجاجية عاكسة وجسر ذهبي
-    if (lower.includes('نظار') || lower.includes('glass') || lower.includes('sunglass')) {
+    // 2. Luxury Designer Sunglasses with Torus Rims, Gold Bridge & Reflective Lenses
+    if (lower.includes('نظار') || lower.includes('glass') || lower.includes('sunglass') || lower.includes('eyewear')) {
         return {
-            description: `تم بناء <strong>نظارة شمسية عصرية فاخرة (Designer Sunglasses)</strong> بنجاح!
+            description: `Constructed <strong>Luxury Designer Sunglasses</strong> successfully!
 <ul>
-  <li>إطاران حلقيان دائريان مجوفان (Smooth Torus Rims) بلون كحلي داكن ببريق عصري.</li>
-  <li>عدستان زجاجيتان عاكستان بتأثير كريستالي أزرق ونفاذية ضوئية (Transmission Glass).</li>
-  <li>جسر أنفي مقوس ومفاصل جانبية مطلية بالذهب المعدني اللامع (Polished Gold).</li>
-  <li>أذرع جانبية انسيابية متصلة بزوايا الأذن دون فراغات هوائية.</li>
+  <li>Dual hollow Torus rims with deep navy polished gloss.</li>
+  <li>Reflective transmission glass lenses with physical IOR and optical depth.</li>
+  <li>Curved polished gold metallic bridge and side hinges.</li>
+  <li>Ergonomic temple arms and curved ear tips without floating gaps.</li>
 </ul>`,
             code: `import bpy
 import math
@@ -2155,19 +1964,19 @@ for obj in bpy.data.objects:
         for poly in obj.data.polygons:
             poly.use_smooth = True
 
-print("✅ تم تصميم النظارة الشمسية الفاخرة بنجاح في بلندر!")
+print("✅ Luxury Sunglasses built successfully in Blender!")
 `
         };
     }
 
-    // 3. طاولة قهوة ومصباح
-    if (lower.includes('طاول') || lower.includes('table') || lower.includes('قهو')) {
+    // 3. Modern Wooden Coffee Table & Desk Lamp
+    if (lower.includes('طاول') || lower.includes('table') || lower.includes('قهو') || lower.includes('desk') || lower.includes('lamp')) {
         return {
-            description: `تم تصميم <strong>طاولة قهوة مودرن خشبية دائرية مع مصباح مكتبي</strong> بنجاح!
+            description: `Constructed <strong>Modern Round Wooden Coffee Table & Desk Lamp</strong> successfully!
 <ul>
-  <li>سطح طاولة دائري خشبي ناعم وسميك.</li>
-  <li>3 أرجل معدنية مائلة رفيعة مع توازن دقيق.</li>
-  <li>مصباح طاولة مكتبي صغير مدمج فوق السطح.</li>
+  <li>Thick polished oak tabletop with beveled rim.</li>
+  <li>3-legged angled metallic tripod base for physical stability.</li>
+  <li>Modern mini desk lamp integrated on the tabletop.</li>
 </ul>`,
             code: `import bpy
 import math
@@ -2213,7 +2022,7 @@ bpy.ops.mesh.primitive_cone_add(radius1=0.16, radius2=0.06, depth=0.18, location
 lamp_shade = bpy.context.active_object
 lamp_shade.name = "LampShade"
 
-print("✅ تم بناء طاولة القهوة والمصباح بنجاح في بلندر!")
+print("✅ Modern Coffee Table & Lamp built successfully in Blender!")
 `
         };
     }
@@ -2233,7 +2042,7 @@ function finalizeAuthenticResponse(msgId, promptText) {
         realBpy = blueprint.code;
         description = blueprint.description;
     } else {
-        description = `<p>تم تشكيل المجسم الهندسي وتوليد كود <code>bpy</code> لـ <strong>"${escapeHtml(promptText)}"</strong>.</p>`;
+        description = `<p>Constructed 3D geometry and generated <code>bpy</code> code for <strong>"${escapeHtml(promptText)}"</strong>.</p>`;
         realBpy = `import bpy
 
 bpy.ops.object.select_all(action='SELECT')
@@ -2247,7 +2056,7 @@ for obj in bpy.data.objects:
         for p in obj.data.polygons:
             p.use_smooth = True
 
-print("✨ تم تصميم المجسم بنجاح في بلندر!")
+print("✨ 3D Model built successfully in Blender!")
 `;
     }
 
@@ -2264,11 +2073,11 @@ print("✨ تم تصميم المجسم بنجاح في بلندر!")
 function formatMarkdownResponse(text, hasValidCode = true) {
     let cleanText = text || "";
 
-    // 1. إزالة أي كتل تفكير داخلية (<think> أو Here's a thinking process)
+    // 1. Remove internal thinking tags (<think> or Here's a thinking process)
     cleanText = cleanText.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
     cleanText = cleanText.replace(/Here'?s\s+a\s+thinking\s+process:[\s\S]*?(?=```|$)/gi, '').trim();
 
-    // 2. استخراج الشرح المكتوب بعد كود بايثون فقط (وتجاهل أي نصوص إنجليزية قبله)
+    // 2. Extract explanation written after python code block
     let explanation = "";
     const codeMatch = /```(?:python|py|bpy)?[\s\S]*?```([\s\S]*)/i.exec(cleanText);
     if (codeMatch && codeMatch[1] && codeMatch[1].trim().length > 0) {
@@ -2277,14 +2086,14 @@ function formatMarkdownResponse(text, hasValidCode = true) {
         explanation = cleanText.replace(/```(?:python|py|bpy)?[\s\S]*?(?:```|$)/gi, '').trim();
     }
 
-    // تنظيف الشرح من أي بقايا إنجليزية للـ thinking
+    // Clean up residual thinking snippets
     const lowerExp = explanation.toLowerCase();
     if (lowerExp.includes('thinking process') || 
         lowerExp.includes('analyze user') || 
         lowerExp.includes('check constraints') ||
         lowerExp.includes('deconstruct the model') ||
         explanation.length < 4) {
-        explanation = "✨ تم تشكيل وبناء المجسم الهندسي ثلاثي الأبعاد وضبط خاماته ومعدلاته بنجاح.";
+        explanation = "✨ 3D parametric geometry, PBR shaders, and modifiers constructed successfully.";
     }
 
     let html = `<p>${explanation.replace(/\n/g, '<br>')}</p>`;
@@ -2293,15 +2102,15 @@ function formatMarkdownResponse(text, hasValidCode = true) {
     if (hasValidCode) {
         html += `
             <div style="margin-top: 14px; padding: 10px 14px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; font-size: 0.83rem;">
-                ✨ <strong>تم تحديث المجسم ثلاثي الأبعاد في الشاشة ومزامنته مع Blender!</strong><br>
-                💡 لإعادة إرساله إلى برنامج <strong>Blender</strong> في أي وقت: اضغط زر <button class="chip" onclick="sendCurrentCodeToBlender()" style="display:inline-block; margin: 4px 0; padding: 2px 8px; font-size: 0.78rem;">⚡ تنفيذ في Blender</button>
+                ✨ <strong>3D model updated in viewport and synchronized with Blender!</strong><br>
+                💡 To re-send to <strong>Blender</strong> anytime: click <button class="chip" onclick="sendCurrentCodeToBlender()" style="display:inline-block; margin: 4px 0; padding: 2px 8px; font-size: 0.78rem;">⚡ Execute in Blender</button>
             </div>
         `;
     } else {
         html += `
             <div style="margin-top: 14px; padding: 10px 14px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; font-size: 0.83rem; color: #fca5a5;">
-                ⚠️ <strong>تنبيه: لم يكتمل كود بلندر</strong> (انقطع التوليد قبل كتابة الكود كاملاً).<br>
-                💡 اختر نموذج <strong>Llama 3.3 70B</strong> أو <strong>Gemini 2.5 Flash</strong> لتوليد فائق السرعة وبدون انقطاع.
+                ⚠️ <strong>Notice: Incomplete Blender Code</strong> (Generation finished before full code closure).<br>
+                💡 Choose <strong>Llama 3.3 70B</strong> or <strong>Gemini 2.5 Flash</strong> for ultra-fast, complete responses.
             </div>
         `;
     }
@@ -2313,8 +2122,8 @@ function appendMessage(sender, text) {
     const msgDiv = document.createElement('div');
     msgDiv.className = `message ${sender}`;
 
-    const avatar = sender === 'user' ? 'أنت' : '🤖';
-    const name = sender === 'user' ? 'المهندس' : 'LiveAgent';
+    const avatar = sender === 'user' ? 'You' : '🤖';
+    const name = sender === 'user' ? 'Engineer' : 'LiveAgent';
 
     msgDiv.innerHTML = `
         <div class="avatar">${avatar}</div>
@@ -2341,7 +2150,7 @@ function appendThinkingMessage() {
             <div class="bubble">
                 <div class="thinking-indicator">
                     <span class="pulse-dot"></span>
-                    <span class="step-text">🧠 جاري تحليل الطلب الهندسي وتوليد كود bpy...</span>
+                    <span class="step-text">🧠 Analyzing 3D prompt and generating bpy code...</span>
                 </div>
             </div>
         </div>
@@ -2375,10 +2184,10 @@ function initBridgeControls() {
                 const statusEl = document.getElementById('blenderStatus');
                 if (statusEl) {
                     statusEl.className = 'status-pill connected';
-                    statusEl.querySelector('.status-text').innerText = `جسر بلندر: متصل (${data.version || 'Active'})`;
+                    statusEl.querySelector('.status-text').innerText = `Blender Bridge: Connected (${data.version || 'Active'})`;
                 }
                 if (resultEl) {
-                    resultEl.innerText = '🟢 متصل بنجاح مع Blender ' + (data.version || '');
+                    resultEl.innerText = '🟢 Connected successfully with Blender ' + (data.version || '');
                     resultEl.style.color = '#10b981';
                 }
             })
@@ -2386,10 +2195,10 @@ function initBridgeControls() {
                 const statusEl = document.getElementById('blenderStatus');
                 if (statusEl) {
                     statusEl.className = 'status-pill disconnected';
-                    statusEl.querySelector('.status-text').innerText = 'جسر بلندر: غير متصل (اضغط للشرح)';
+                    statusEl.querySelector('.status-text').innerText = 'Blender Bridge: Disconnected (Click to setup)';
                 }
                 if (resultEl) {
-                    resultEl.innerText = '⚠️ بلندر غير متصل حالياً. (تأكد من تشغيل السكربت داخل بلندر)';
+                    resultEl.innerText = '⚠️ Blender is not currently connected. (Make sure add-on is active or run launch_blender_bridge.bat)';
                     resultEl.style.color = '#f59e0b';
                 }
             });
@@ -2409,7 +2218,7 @@ function initBridgeControls() {
     if (testBtn) {
         testBtn.addEventListener('click', () => {
             if (resultEl) {
-                resultEl.innerText = 'جاري الاتصال بـ بلندر...';
+                resultEl.innerText = 'Connecting to Blender...';
                 resultEl.style.color = '#38bdf8';
             }
             checkBridge();
@@ -2418,8 +2227,7 @@ function initBridgeControls() {
 }
 
 /**
- * إرسال الكود الحقيقي المولد إلى برنامج Blender وتنفيذه فورياً
- * مع استقبال بيانات الكائنات الحقيقية وعرضها بتطابق 100%
+ * Send verified bpy Python code to running Blender session
  */
 function sendCurrentCodeToBlender(explicitCode, promptTitle) {
     let code = explicitCode || latestCleanBpyCode || document.getElementById('generatedCodeDisplay').innerText;
@@ -2429,7 +2237,7 @@ function sendCurrentCodeToBlender(explicitCode, promptTitle) {
     if (!code || code.trim().length === 0) return;
 
     const tStart = Date.now();
-    btn.innerText = '⏳ جاري الإرسال والتنفيذ في Blender...';
+    btn.innerText = '⏳ Sending & executing in Blender...';
     btn.style.background = '#3b82f6';
 
     const bridgeUrl = getBridgeHost();
@@ -2443,19 +2251,19 @@ function sendCurrentCodeToBlender(explicitCode, promptTitle) {
     .then(data => {
         if (data && data.status === 'error') {
             const elapsed = ((Date.now() - tStart) / 1000).toFixed(1);
-            btn.innerText = `❌ خطأ في كود بلندر (${elapsed}ث)`;
+            btn.innerText = `❌ Error in Blender code (${elapsed}s)`;
             btn.style.background = '#ef4444';
-            appendMessage('assistant', `⚠️ واجه بلندر خطأ أثناء محاولة تنفيذ الكود:\n\`\`\`\n${data.error || 'خطأ غير معروف'}\n\`\`\``);
+            appendMessage('assistant', `⚠️ Blender encountered an error during code execution:\n\`\`\`\n${data.error || 'Unknown error'}\n\`\`\``);
             setTimeout(() => {
-                btn.innerText = '⚡ تنفيذ في Blender';
+                btn.innerText = '⚡ Execute in Blender';
                 btn.style.background = '';
             }, 5000);
             return;
         }
 
-        btn.innerText = '⚙️ جاري مزامنة المشهد من Blender...';
+        btn.innerText = '⚙️ Synchronizing scene from Blender...';
 
-        // إذا أرجع بلندر الكائنات الحقيقية مباشرة نقوم برسمها فوراً
+        // Render true Blender objects immediately
         if (data && data.objects && data.objects.length > 0) {
             renderFromBlenderScene(data.objects, promptTitle);
         }
@@ -2466,35 +2274,34 @@ function sendCurrentCodeToBlender(explicitCode, promptTitle) {
                 .then(sceneData => {
                     const elapsed = ((Date.now() - tStart) / 1000).toFixed(1);
                     const count = (sceneData && typeof sceneData.objects_count !== 'undefined') ? sceneData.objects_count : (data.objects_count || 0);
-                    btn.innerText = `✅ تم البناء في Blender (${count} كائنات | ${elapsed}ث)`;
+                    btn.innerText = `✅ Built in Blender (${count} objects | ${elapsed}s)`;
                     btn.style.background = '#10b981';
 
-                    // رسم كائنات بلندر الحقيقية بتطابق 100%
                     if (sceneData && sceneData.objects && sceneData.objects.length > 0) {
                         renderFromBlenderScene(sceneData.objects, promptTitle);
                     }
 
                     setTimeout(() => {
-                        btn.innerText = '⚡ تنفيذ في Blender';
+                        btn.innerText = '⚡ Execute in Blender';
                         btn.style.background = '';
                     }, 4000);
                 })
                 .catch(() => {
                     const elapsed = ((Date.now() - tStart) / 1000).toFixed(1);
-                    btn.innerText = `✅ تم التنفيذ في Blender (${elapsed}ث)`;
+                    btn.innerText = `✅ Executed in Blender (${elapsed}s)`;
                     btn.style.background = '#10b981';
                     setTimeout(() => {
-                        btn.innerText = '⚡ تنفيذ في Blender';
+                        btn.innerText = '⚡ Execute in Blender';
                         btn.style.background = '';
                     }, 3000);
                 });
         }, 350);
     })
     .catch(err => {
-        btn.innerText = '⚠️ بلندر غير متصل حالياً';
+        btn.innerText = '⚠️ Blender not connected';
         btn.style.background = '#f59e0b';
         setTimeout(() => {
-            btn.innerText = '⚡ تنفيذ في Blender';
+            btn.innerText = '⚡ Execute in Blender';
             btn.style.background = '';
         }, 4000);
         const bridgeTabBtn = document.querySelector('[data-tab="bridgeTab"]');
@@ -2502,7 +2309,7 @@ function sendCurrentCodeToBlender(explicitCode, promptTitle) {
     });
 }
 
-// 9. النافذة المنبثقة للإعدادات متعددة المزودين (Multi-Provider Settings Modal)
+// 9. Multi-Provider Settings Modal
 function initSettingsModal() {
     const modal = document.getElementById('settingsModal');
     const openBtn = document.getElementById('settingsBtn');
@@ -2539,7 +2346,7 @@ function initSettingsModal() {
         });
 
         if (apiKeyLabel) {
-            apiKeyLabel.innerText = `مفتاح ${provider.name} API:`;
+            apiKeyLabel.innerText = `${provider.name} API Key:`;
         }
         if (apiKeyInput) {
             apiKeyInput.placeholder = provider.keyPlaceholder;
@@ -2585,7 +2392,6 @@ function initSettingsModal() {
         localStorage.setItem('liveagent_model', model);
         localStorage.setItem(`liveagent_${pKey}_key`, key);
         
-        // التوافقية مع المفاتيح القديمة
         if (pKey === 'gemini') {
             localStorage.setItem('liveagent_api_key', key);
         }
@@ -2595,7 +2401,7 @@ function initSettingsModal() {
 
         const pName = PROVIDERS[pKey]?.name || pKey;
         if (key) {
-            appendMessage('assistant', `✅ تم حفظ الإعدادات وتفعيل المزود **${pName}** بنموذج **${model}** بنجاح!\nالوكيل جاهز لتوليد وتصميم أي مجسم 3D في بلندر فورياً وبدون قيود.`);
+            appendMessage('assistant', `✅ Settings saved! Provider **${pName}** with model **${model}** is ready.\nLiveAgent is ready to construct any 3D model directly in Blender.`);
         }
     });
 }
