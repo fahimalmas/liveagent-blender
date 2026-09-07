@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiveAgent 3D - Blender AI Assistant</title>
+    <!-- خط Tajawal الأنيق للأعمال الهندسية والتقنية -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Three.js للمعاينة ثلاثية الأبعاد الحية داخل المتصفح -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- شريط الرأس العلوي (Header) -->
+        <header class="top-header">
+            <div class="brand-section">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                    </svg>
+                </div>
+                <div class="brand-titles">
+                    <h1>LiveAgent <span class="badge-3d">3D</span></h1>
+                    <span class="sub-title">الوكيل الذكي للتحكم ببرنامج Blender</span>
+                </div>
+            </div>
+
+            <div class="status-bar">
+                <div class="status-pill disconnected" id="blenderStatus" title="اضغط لفتح دليل ربط بلندر">
+                    <span class="dot"></span>
+                    <span class="status-text">جسر بلندر: جاري الفحص...</span>
+                </div>
+                <div class="model-badge">
+                    <span class="icon">⚡</span>
+                    <span id="activeModel">Gemini 3.8 Flash Pro</span>
+                </div>
+                <button class="settings-btn" id="settingsBtn" title="الإعدادات">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- المحتوى الرئيسي المقسم لعمودين -->
+        <main class="main-workspace">
+            <!-- العمود الأيمن: الشات وتفكير الوكيل -->
+            <section class="chat-panel">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- رسالة الترحيب الأولى من الوكيل -->
+                    <div class="message assistant">
+                        <div class="avatar">🤖</div>
+                        <div class="message-content">
+                            <div class="sender-name">LiveAgent</div>
+                            <div class="bubble">
+                                <p>أهلاً بك يا مهندس! أنا وكيلك الذكي المتخصص في النمذجة والتحكم ببرنامج <strong>Blender</strong>.</p>
+                                <p>أستطيع بناء المجسمات ثلاثية الأبعاد، وضبط الخامات والإضاءة، وتطبيق المعدلات (Modifiers) بدقة برمجية عالية.</p>
+                                <div class="suggestion-box">
+                                    <span class="suggestion-title">جرّب أحد الأوامر التالية:</span>
+                                    <div class="suggestions-list">
+                                        <button class="chip" onclick="sendQuickPrompt('صمم لي وردة جورية حمراء واقعية في مزهرية')">🌹 صمم وردة جورية واقعية</button>
+                                        <button class="chip" onclick="sendQuickPrompt('صمم كرسي قيمنق عالي الظهر')">🪑 صمم كرسي قيمنق رياضي</button>
+                                        <button class="chip" onclick="sendQuickPrompt('صمم لي نظارة شمسية عصرية بإطار أسود وعدسات زجاجية عاكسة')">🕶️ نظارة شمسية عصرية</button>
+                                        <button class="chip" onclick="sendQuickPrompt('أضف إضاءة استوديو احترافية ثلاثية النقاط للمشهد')">💡 إضاءة استوديو احترافية</button>
+                                        <button class="chip" onclick="sendQuickPrompt('نظف المشهد بالكامل وابدأ من الصفر')">🧹 تنظيف المشهد</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- منطقة الإدخال -->
+                <div class="chat-input-area">
+                    <div class="input-wrapper">
+                        <textarea id="userInput" placeholder="اطلب ما ترغب بتصميمه في بلندر... (مثال: صمم لي نظارة كاملة ثلاثية الأبعاد)" rows="1"></textarea>
+                        <button id="sendBtn" class="send-button" title="إرسال">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="input-hints">
+                        <span>💡 يدعم الأوامر الهندسية الدقيقة وتوليد كود <code>bpy</code> ومعدلات Subdivision Surface</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- العمود الأيسر: شاشة بلندر الحية وعارض الكود -->
+            <section class="viewer-panel">
+                <div class="panel-tabs">
+                    <button class="tab-btn active" data-tab="viewportTab">
+                        <span class="tab-icon">👁️</span>
+                        معاينة ثلاثية الأبعاد حية (3D Viewport)
+                    </button>
+                    <button class="tab-btn" data-tab="codeTab">
+                        <span class="tab-icon">💻</span>
+                        كود بايثون بلندر (bpy Script)
+                    </button>
+                    <button class="tab-btn" data-tab="bridgeTab">
+                        <span class="tab-icon">🔌</span>
+                        جسر الاتصال والتعليمات
+                    </button>
+                </div>
+
+                <!-- تبويب المعاينة 3D الحية -->
+                <div class="tab-content active" id="viewportTab">
+                    <div class="viewport-canvas-container" id="canvasContainer">
+                        <!-- شريط التحكم العلوي: الكاميرا والاستوديوهات السينمائية -->
+                        <div class="viewport-overlay-controls">
+                            <div class="control-group-left">
+                                <button id="resetCameraBtn" class="control-badge" title="إعادة ضبط الكاميرا">🎯 مركز الرؤية</button>
+                                <button id="toggleWireframeBtn" class="control-badge" title="الشبكة السلكية">🕸️ Wireframe</button>
+                                <button id="sendToBlenderBtn" class="control-badge highlight" title="إرسال إلى بلندر المفتوح">⚡ تنفيذ في Blender</button>
+                            </div>
+                            <!-- مبدّل الاستوديوهات السينمائية المستوحى من Chiro Studio -->
+                            <div class="studio-selector-bar">
+                                <span class="studio-label">الاستوديو:</span>
+                                <button class="studio-btn active" data-studio="pure" title="استوديو نقي فوتوغرافي">🌟 نقي</button>
+                                <button class="studio-btn" data-studio="cyberpunk" title="خيال علمي ونيون هولوغرام">🌌 سايبربانك</button>
+                                <button class="studio-btn" data-studio="snow" title="نظام ثلج سينمائي إجرائي">❄️ ثلج</button>
+                                <button class="studio-btn" data-studio="track" title="مضمار سباق وأسفلت مبلل">🏎️ مضمار</button>
+                            </div>
+                        </div>
+
+                        <!-- لوحة الفحص والتعديل التفاعلي المباشر للقطع (Floating Part Inspector HUD) -->
+                        <div class="part-inspector-hud" id="partInspectorHud" style="display: none;">
+                            <div class="inspector-header">
+                                <div class="part-title-box">
+                                    <span class="inspector-badge">قطعة محددة</span>
+                                    <h4 id="inspectorPartName">Part_Name</h4>
+                                </div>
+                                <button class="close-inspector-btn" id="closeInspectorBtn" title="إغلاق">✕</button>
+                            </div>
+                            <div class="inspector-body">
+                                <div class="inspector-row">
+                                    <label>اللون الأساسي:</label>
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="inspectorColorPicker" value="#ffffff">
+                                        <span id="inspectorColorHex">#FFFFFF</span>
+                                    </div>
+                                </div>
+                                <div class="inspector-row">
+                                    <div class="label-with-val">
+                                        <label>الخشونة (Roughness):</label>
+                                        <span id="inspectorRoughnessVal">0.30</span>
+                                    </div>
+                                    <input type="range" id="inspectorRoughnessSlider" min="0" max="1" step="0.05" value="0.30">
+                                </div>
+                                <div class="inspector-row">
+                                    <div class="label-with-val">
+                                        <label>المعدنية (Metallic):</label>
+                                        <span id="inspectorMetallicVal">0.00</span>
+                                    </div>
+                                    <input type="range" id="inspectorMetallicSlider" min="0" max="1" step="0.05" value="0.00">
+                                </div>
+                            </div>
+                            <div class="inspector-footer">
+                                <span class="sync-status" id="inspectorSyncStatus">🟢 مزامنة فورية مع Blender 5.2</span>
+                            </div>
+                        </div>
+
+                        <div class="viewport-info-bar">
+                            <span id="objectStats">المجسم: جاهز للاستقبال | الأوجه: 0</span>
+                            <span class="helper-text">💡 انقر على أي جزء من المجسم لتعديل لونه ولمعانه ومزامنته فورياً مع بلندر!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تبويب كود بايثون المتولد -->
+                <div class="tab-content" id="codeTab">
+                    <div class="code-editor-wrapper">
+                        <div class="code-toolbar">
+                            <span class="lang-tag">Python (bpy)</span>
+                            <button id="copyCodeBtn" class="copy-btn">📋 نسخ الكود</button>
+                        </div>
+                        <pre><code class="language-python" id="generatedCodeDisplay"># سيظهر هنا كود بايثون المولد تلقائياً بواسطة الوكيل
+# بمجرد أن تطلب أي تصميم، سيقوم الوكيل بصياغة الأوامر 
+# وتنفيذها داخل برنامج بلندر فورياً.
+
+import bpy
+
+def setup_scene():
+    print("جاهز لاستقبال أوامر التصميم...")
+</code></pre>
+                    </div>
+                </div>
+
+                <!-- تبويب جسر بلندر وطريقة التشغيل -->
+                <div class="tab-content" id="bridgeTab">
+                    <div class="bridge-guide">
+                        <h3>🔌 الاتصال التلقائي ببرنامج Blender (بدون نسخ أو لصق!)</h3>
+                        <p class="guide-intro">وداعاً لنسخ ولصق الأكواد! وفرنا لك إضافة بلندر رسمية ومدمجة تعمل تلقائياً في الخلفية في كل مرة تفتح فيها بلندر.</p>
+                        
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                            <div>
+                                <h4 style="color: #34d399; margin-bottom: 4px; font-size: 1.05rem;">📦 إضافة بلندر الرسمية (LiveAgent 3D Add-on)</h4>
+                                <p style="font-size: 0.84rem; color: var(--text-secondary); margin: 0;">ثبّتها داخل بلندر <b>لمرة واحدة فقط في حياتك</b>، وسيعمل الاتصال تلقائياً إلى الأبد!</p>
+                            </div>
+                            <a href="liveagent_bridge.zip" download="liveagent_bridge.zip" class="test-conn-btn" style="background: linear-gradient(135deg, #10b981, #059669); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: bold;">
+                                📥 تحميل الإضافة (liveagent_bridge.zip)
+                            </a>
+                        </div>
+
+                        <div class="steps-box">
+                            <div class="step-item">
+                                <span class="step-num">1</span>
+                                <div class="step-desc">
+                                    <strong>حمّل ملف الإضافة</strong> بالضغط على الزر الأخضر أعلاه (أو ستجده في مجلد <code>blender_addon/liveagent_bridge.zip</code>).
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <span class="step-num">2</span>
+                                <div class="step-desc">
+                                    افتح برنامج <strong>Blender</strong> واذهب إلى القائمة العلوية: <code>Edit > Preferences > Add-ons</code>.
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <span class="step-num">3</span>
+                                <div class="step-desc">
+                                    اضغط على أيقونة الترس ⚙️ بالأعلى واختر <strong>Install from Disk...</strong> واختر ملف <code>liveagent_bridge.zip</code>.
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <span class="step-num">4</span>
+                                <div class="step-desc">
+                                    ضع <strong>علامة الصح ✔️</strong> لتفعيل الإضافة! ستظهر لك لوحة <strong>LiveAgent</strong> في الشريط الجانبي (N)، وسيعمل السيرفر تلقائياً دائماً في الخلفية.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 14px 18px; margin: 18px 0; font-size: 0.86rem; color: var(--text-secondary);">
+                            💡 <b>طريقة التشغيل التلقائي السريع:</b> يمكنك أيضاً النقر المزدوج على ملف <code>launch_blender_bridge.bat</code> في مجلد المشروع ليفتح بلندر مع الجسر تلقائياً بنقرة زر واحدة!
+                        </div>
+
+                        <div class="bridge-actions">
+                            <button class="test-conn-btn" id="testBridgeBtn">🔄 فحص حالة الاتصال مع بلندر الآن</button>
+                            <span id="bridgeTestResult" class="test-result"></span>
+                        </div>
+
+                        <!-- بصمة وحقوق المطور فاهم الماس -->
+                        <div style="margin-top: 25px; padding: 18px 22px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.75)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                            <div style="font-size: 1.12rem; font-weight: bold; color: #38bdf8; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <span>🇦🇪</span> <span>ابتكار وتطوير: المهندس فاهم سالم الماس (Fahim Almas)</span>
+                            </div>
+                            <p style="font-size: 0.86rem; color: #cbd5e1; margin: 0 0 10px 0; line-height: 1.6;">
+                                خبير وكلاء الذكاء الاصطناعي وهندسة الأوامر (AI Agents & Prompt Systems Engineer)<br>
+                                حاصل على شارة <b>Google Cloud: Prompt Design in Vertex AI</b> ومعتمد من <b>مؤسسة دبي للمستقبل</b> (1 Million Prompters)
+                            </p>
+                            <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; font-size: 0.86rem;">
+                                <a href="https://www.fmas.dev/" target="_blank" style="color: #60a5fa; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                    🌐 الموقع الرسمي: fmas.dev
+                                </a>
+                                <span style="color: #64748b;">•</span>
+                                <a href="https://github.com/fahimalmas" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                    🐙 GitHub: @fahimalmas
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- نافذة الإعدادات المنبثقة -->
+    <div class="modal-backdrop" id="settingsModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>إعدادات محرك الذكاء الاصطناعي</h2>
+                <button class="close-modal-btn" id="closeSettingsBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>مزود الخدمة (AI Provider):</label>
+                    <select id="providerSelect">
+                        <option value="groq">⚡ Groq Cloud (مجاني 14,400 طلب/يوم - الأسرع عالمياً)</option>
+                        <option value="gemini">🌟 Google Gemini (مجاني 1,500 طلب/يوم - Google AI Studio)</option>
+                        <option value="openrouter">🌐 OpenRouter (بوابة النماذج المفتوحة والمدفوعة)</option>
+                        <option value="anthropic">🧠 Anthropic Claude (محرك Terra - يتطلب رصيد مدفوع)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>نموذج الذكاء الاصطناعي (Model):</label>
+                    <select id="modelSelect">
+                        <!-- يتم ملؤه ديناميكياً بناءً على المزود المختار -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label id="apiKeyLabel">مفتاح API الخاص بك:</label>
+                    <input type="password" id="apiKeyInput" placeholder="الصق مفتاح API هنا...">
+                    <small id="apiKeyHint" style="color: var(--text-muted); font-size: 0.78rem; margin-top: 5px; display: block; line-height: 1.4;">
+                        <!-- يتم تحديث الرابط والشرح ديناميكياً -->
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label>عنوان جسر بلندر (Blender Bridge Port):</label>
+                    <input type="text" id="bridgeHost" value="http://localhost:8123">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="save-btn" id="saveSettingsBtn">حفظ الإعدادات</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=20260907_v30"></script>
+</body>
+</html>

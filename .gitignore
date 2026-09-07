@@ -1,0 +1,19 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary debugging & scratch files
+scratch/
+scratch_*.json
+scratch_*.txt
+anim_err.txt
+eval_frame*.json
+test_blender.py
+test_rose_blender.py
+
+# OS / Editor artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
