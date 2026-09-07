@@ -147,6 +147,11 @@ def clean_bpy_code(code_str):
     cleaned = re.sub(r"\.get\(\s*['\"]Sheen['\"]\s*\)", ".get('Sheen Weight')", cleaned)
     # إصلاح تلقائي لأي خطأ أقواس في استدعاء التنعيم
     cleaned = re.sub(r'bpy\.ops\.object\.shade_smooth\s*\(\s*\)\s*\)+', 'bpy.ops.object.shade_smooth()', cleaned)
+
+    # إذا كان الكود يبني مجسمات جديدة ولا يحتوي على أمر تنظيف المشهد السابق
+    if "primitive_" in cleaned and "select_all" not in cleaned and "obj.data.materials" not in cleaned:
+        cleaned = "import bpy\nbpy.ops.object.select_all(action='SELECT')\nbpy.ops.object.delete(use_global=False)\n" + cleaned
+
     return cleaned
 
 # إغلاق أي سيرفر قديم مسجل في Blender لمنع تعارض المنفذ

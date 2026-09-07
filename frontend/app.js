@@ -627,17 +627,26 @@ class PartInspectorManager {
         const pyCode = `
 import bpy
 obj = bpy.data.objects.get('${partName}')
-if obj and obj.data.materials and len(obj.data.materials) > 0:
-    for mat in obj.data.materials:
-        if mat and mat.use_nodes and mat.node_tree:
-            bsdf = mat.node_tree.nodes.get('Principled BSDF')
-            if bsdf:
-                if 'Base Color' in bsdf.inputs:
-                    bsdf.inputs['Base Color'].default_value = (${r}, ${g}, ${b}, 1.0)
-                if 'Roughness' in bsdf.inputs:
-                    bsdf.inputs['Roughness'].default_value = ${roughness}
-                if 'Metallic' in bsdf.inputs:
-                    bsdf.inputs['Metallic'].default_value = ${metallic}
+if obj:
+    if obj.data.materials and len(obj.data.materials) > 0:
+        mat = obj.data.materials[0]
+        if mat.users > 1:
+            mat = mat.copy()
+            obj.data.materials[0] = mat
+    else:
+        mat = bpy.data.materials.new(name=f"Mat_${partName}")
+        mat.use_nodes = True
+        obj.data.materials.append(mat)
+
+    if mat and mat.use_nodes and mat.node_tree:
+        bsdf = mat.node_tree.nodes.get('Principled BSDF')
+        if bsdf:
+            if 'Base Color' in bsdf.inputs:
+                bsdf.inputs['Base Color'].default_value = (${r}, ${g}, ${b}, 1.0)
+            if 'Roughness' in bsdf.inputs:
+                bsdf.inputs['Roughness'].default_value = ${roughness}
+            if 'Metallic' in bsdf.inputs:
+                bsdf.inputs['Metallic'].default_value = ${metallic}
 `;
         try {
             const bridgeHost = document.getElementById('bridgeHost')?.value?.trim() || 'http://localhost:8123';
@@ -925,6 +934,11 @@ function extractAndCleanPythonCode(text) {
     cleanedCode = cleanedCode.replace(/\.get\(\s*['"]Sheen['"]\s*\)/g, ".get('Sheen Weight')");
     // إصلاح تلقائي لأي خطأ أقواس في استدعاء التنعيم
     cleanedCode = cleanedCode.replace(/bpy\.ops\.object\.shade_smooth\s*\(\s*\)\s*\)+/g, 'bpy.ops.object.shade_smooth()');
+
+    // إذا كان الكود يبني مجسمات جديدة (يحتوي على primitive_*_add) ولا يحتوي على أمر مسح المشهد السابق
+    if (cleanedCode.includes('primitive_') && !cleanedCode.includes('select_all') && !cleanedCode.includes('delete(use_global=')) {
+        cleanedCode = `import bpy\n\n# تنظيف المشهد السابق تلقائياً لبناء المجسم الجديد فقط\nbpy.ops.object.select_all(action='SELECT')\nbpy.ops.object.delete(use_global=False)\n\n` + cleanedCode;
+    }
 
     return cleanedCode;
 }
@@ -1473,8 +1487,24 @@ import math
        4. أوراق وسيقان فرعية مائلة.
        5. كأس الزهرة وسبلاتها الخضراء.
        6. بتلات الوردة الحلزونية (Rose Petals) فوق الساق مباشرة عند قمة المشهد! (ممنوع توليد المزهرية وحدها فارغة).
-     * للنظارات والإكسسوارات (Eyewear):
-       عدستان زجاجيتان + إطاران متناسقان + الجسر الأنفي الأوسط الرابط + ذراعان جانبيان بانحناءة الأذن.
+      * للنظارات الشمسية والإكسسوارات (Modern Eyewear & Sunglasses):
+        يجب بناء النظارة كاملة ومترابطة فيزيائياً بدون أي فراغات هوائية:
+        1. إطارا العدستين (L & R Frames):
+           for sx in (-0.75, 0.75):
+               bpy.ops.mesh.primitive_cylinder_add(radius=0.62, depth=0.08, location=(sx, 0, 0), rotation=(math.radians(90), 0, 0))
+        2. العدستان الزجاجيتان العاكستان (L & R Lenses):
+           for sx in (-0.75, 0.75):
+               bpy.ops.mesh.primitive_cylinder_add(radius=0.56, depth=0.04, location=(sx, 0.01, 0), rotation=(math.radians(90), 0, 0))
+        3. الجسر الأنفي الأوسط الرابط بين العدستين (Nose Bridge):
+           bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0, 0.02, 0.25))
+           bridge = bpy.context.active_object
+           bridge.scale = (0.42, 0.06, 0.06)
+        4. الذراعان الجانبيان ممتدان للخلف باتجاه -Y مع انحناءة الأذن:
+           for sx in (-1.35, 1.35):
+               bpy.ops.mesh.primitive_cube_add(size=1.0, location=(sx, -0.9, 0.2))
+               arm = bpy.context.active_object
+               arm.scale = (0.05, 1.8, 0.08)
+               bpy.ops.mesh.primitive_cylinder_add(radius=0.04, depth=0.35, location=(sx, -1.85, 0.05), rotation=(math.radians(45), 0, 0))
      * للروبوتات والشخصيات (Robots & Characters):
        الجذع + الرأس بتفاصيل العيون المضيئة + الذراعان والمفاصل + الساقان والقواعد.
      * للمركبات الفضائية والمقاتلات (Spaceships & Starfighters):
