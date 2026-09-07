@@ -136,9 +136,11 @@ def clean_bpy_code(code_str):
     # إصلاح تلقائي لأي خطأ أقواس في استدعاء التنعيم
     cleaned = re.sub(r'bpy\.ops\.object\.shade_smooth\s*\(\s*\)\s*\)+', 'bpy.ops.object.shade_smooth()', cleaned)
 
-    # إذا كان الكود يبني مجسمات جديدة ولا يحتوي على أمر تنظيف المشهد السابق
-    if "primitive_" in cleaned and "select_all" not in cleaned and "obj.data.materials" not in cleaned:
-        cleaned = "import bpy\nbpy.ops.object.select_all(action='SELECT')\nbpy.ops.object.delete(use_global=False)\n" + cleaned
+    # إذا كان الكود يبني مجسمات جديدة نقوم بمسح كافة كائنات المشهد جذرياً (دون الاعتماد على select_all الهش)
+    if "primitive_" in cleaned and "obj.data.materials" not in cleaned:
+        cleaned = re.sub(r'bpy\.ops\.object\.select_all\s*\([^)]*\)\s*;?\s*\n?', '', cleaned)
+        cleaned = re.sub(r'bpy\.ops\.object\.delete\s*\([^)]*\)\s*;?\s*\n?', '', cleaned)
+        cleaned = "import bpy\nfor _obj in list(bpy.data.objects):\n    bpy.data.objects.remove(_obj, do_unlink=True)\nfor _mesh in list(bpy.data.meshes):\n    bpy.data.meshes.remove(_mesh, do_unlink=True)\n" + cleaned
 
     return cleaned
 

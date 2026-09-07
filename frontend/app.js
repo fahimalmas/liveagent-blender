@@ -935,9 +935,11 @@ function extractAndCleanPythonCode(text) {
     // إصلاح تلقائي لأي خطأ أقواس في استدعاء التنعيم
     cleanedCode = cleanedCode.replace(/bpy\.ops\.object\.shade_smooth\s*\(\s*\)\s*\)+/g, 'bpy.ops.object.shade_smooth()');
 
-    // إذا كان الكود يبني مجسمات جديدة (يحتوي على primitive_*_add) ولا يحتوي على أمر مسح المشهد السابق
-    if (cleanedCode.includes('primitive_') && !cleanedCode.includes('select_all') && !cleanedCode.includes('delete(use_global=')) {
-        cleanedCode = `import bpy\n\n# تنظيف المشهد السابق تلقائياً لبناء المجسم الجديد فقط\nbpy.ops.object.select_all(action='SELECT')\nbpy.ops.object.delete(use_global=False)\n\n` + cleanedCode;
+    // إذا كان الكود يبني مجسمات جديدة نقوم بمسح كافة كائنات المشهد جذرياً وموثوقاً (دون الاعتماد على select_all الهش)
+    if (cleanedCode.includes('primitive_') && !cleanedCode.includes('obj.data.materials')) {
+        cleanedCode = cleanedCode.replace(/bpy\.ops\.object\.select_all\s*\([^)]*\)\s*;?\s*\n?/g, '');
+        cleanedCode = cleanedCode.replace(/bpy\.ops\.object\.delete\s*\([^)]*\)\s*;?\s*\n?/g, '');
+        cleanedCode = `import bpy\n# تنظيف جذري لكافة كائنات المشهد السابقة دون استثناء\nfor _obj in list(bpy.data.objects):\n    bpy.data.objects.remove(_obj, do_unlink=True)\nfor _mesh in list(bpy.data.meshes):\n    bpy.data.meshes.remove(_mesh, do_unlink=True)\n\n` + cleanedCode;
     }
 
     return cleanedCode;
@@ -1888,8 +1890,10 @@ function getCertifiedBlueprint(promptText) {
             code: `import bpy
 import math
 
-bpy.ops.object.select_all(action='SELECT')
-bpy.ops.object.delete(use_global=False)
+for _obj in list(bpy.data.objects):
+    bpy.data.objects.remove(_obj, do_unlink=True)
+for _mesh in list(bpy.data.meshes):
+    bpy.data.meshes.remove(_mesh, do_unlink=True)
 
 # خامات البتلات والساق والمزهرية
 mat_petal = bpy.data.materials.new(name="Rose_Petal")
@@ -1971,8 +1975,11 @@ print("✅ تم بناء الوردة الجورية في بلندر بنجاح!
             code: `import bpy
 import math
 
-bpy.ops.object.select_all(action='SELECT')
-bpy.ops.object.delete(use_global=False)
+for _obj in list(bpy.data.objects):
+    bpy.data.objects.remove(_obj, do_unlink=True)
+for _mesh in list(bpy.data.meshes):
+    bpy.data.meshes.remove(_mesh, do_unlink=True)
+
 
 # الخامات
 mat_frame = bpy.data.materials.new(name="Sunglasses_Frame")
@@ -2048,8 +2055,11 @@ print("✅ تم تصميم النظارة الشمسية العصرية بنجا
             code: `import bpy
 import math
 
-bpy.ops.object.select_all(action='SELECT')
-bpy.ops.object.delete(use_global=False)
+for _obj in list(bpy.data.objects):
+    bpy.data.objects.remove(_obj, do_unlink=True)
+for _mesh in list(bpy.data.meshes):
+    bpy.data.meshes.remove(_mesh, do_unlink=True)
+
 
 mat_wood = bpy.data.materials.new(name="Table_OakWood")
 mat_wood.use_nodes = True
