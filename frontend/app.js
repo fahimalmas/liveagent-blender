@@ -1815,6 +1815,22 @@ function initChatControls() {
 }
 
 function sendQuickPrompt(promptText) {
+    const fallback = getCertifiedBlueprint(promptText);
+    if (fallback) {
+        appendMessage('user', promptText);
+        const assistantMsgId = appendThinkingMessage();
+        latestCleanBpyCode = fallback.code;
+        document.getElementById('generatedCodeDisplay').innerText = fallback.code;
+        renderFromBpyCode(fallback.code, promptText);
+        sendCurrentCodeToBlender(fallback.code, promptText);
+        const msgEl = document.getElementById(assistantMsgId);
+        if (msgEl) {
+            msgEl.querySelector('.bubble').innerHTML = formatMarkdownResponse(fallback.description, true);
+        }
+        const chatContainer = document.getElementById('chatMessages');
+        if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+        return;
+    }
     executeUserCommand(promptText);
 }
 
