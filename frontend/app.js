@@ -1903,11 +1903,12 @@ function getCertifiedBlueprint(promptText) {
     // 1. وردة جورية حمراء واقعية في مزهرية
     if (lower.includes('ورد') || lower.includes('rose') || lower.includes('زهر') || lower.includes('مزهر')) {
         return {
-            description: `تم بناء <strong>وردة جورية حمراء واقعية في مزهرية زجاجية</strong> بنجاح!
+            description: `تم بناء <strong>وردة جورية حمراء مخملية فائقة الواقعية (Master Velvet Rose)</strong> بنجاح!
 <ul>
-  <li>مزهرية زجاجية أنيقة بخامة Transmission عالية ونقاء كريستالي.</li>
-  <li>قرص ماء عاكس في قاع المزهرية وساق أسطواني أخضر نضر.</li>
-  <li>أوراق جانبية متناسقة وبتلات جورية حلزونية تتبع تسلسل فيبوناتشي الذهبي (Fibonacci Spiral).</li>
+  <li>خامة بتلات مخملية قرمزية عميقة مدعمة بتشتت الضوء الباطني (Subsurface Scattering) وبريق المخمل (Sheen).</li>
+  <li>هندسة بتلات حلزونية ذهبية (Fibonacci Spiral) بـ 28 بتلة متدرجة من القلب المضموم للأطراف المفتوحة.</li>
+  <li>قطرات ندى مائية كريستالية (Micro Dew Drops) بنفاذية ضوئية متناثرة على سطح البتلات.</li>
+  <li>تشريح نباتي كامل: كأس الوردة (Calyx)، 5 سبلات مدببة (Sepals)، وساق شوكية مع مزهرية زجاجية وماء.</li>
 </ul>`,
             code: `import bpy
 import math
@@ -1917,70 +1918,131 @@ for _obj in list(bpy.data.objects):
 for _mesh in list(bpy.data.meshes):
     bpy.data.meshes.remove(_mesh, do_unlink=True)
 
-# خامات البتلات والساق والمزهرية
-mat_petal = bpy.data.materials.new(name="Rose_Petal")
+# 1. خامة البتلات المخملية الفاخرة (Velvet Crimson Red مع Subsurface Scattering و Sheen)
+mat_petal = bpy.data.materials.new(name="Rose_VelvetPetal")
 mat_petal.use_nodes = True
 bsdf_p = mat_petal.node_tree.nodes.get("Principled BSDF")
-bsdf_p.inputs['Base Color'].default_value = (0.85, 0.05, 0.15, 1.0)
-bsdf_p.inputs['Roughness'].default_value = 0.3
+bsdf_p.inputs['Base Color'].default_value = (0.72, 0.015, 0.035, 1.0)
+bsdf_p.inputs['Roughness'].default_value = 0.28
+bsdf_p.inputs['Subsurface Weight'].default_value = 0.35
+bsdf_p.inputs['Subsurface Radius'].default_value = (0.5, 0.2, 0.1)
+bsdf_p.inputs['Sheen Weight'].default_value = 0.85
+bsdf_p.inputs['Sheen Tint'].default_value = (0.9, 0.1, 0.1, 1.0)
+bsdf_p.inputs['Specular IOR Level'].default_value = 0.55
 
-mat_stem = bpy.data.materials.new(name="Rose_Stem")
+# 2. خامة الساق والسبلات والأوراق (نباتية خضراء نضرة)
+mat_stem = bpy.data.materials.new(name="Rose_BotanicalGreen")
 mat_stem.use_nodes = True
 bsdf_s = mat_stem.node_tree.nodes.get("Principled BSDF")
-bsdf_s.inputs['Base Color'].default_value = (0.05, 0.45, 0.08, 1.0)
-bsdf_s.inputs['Roughness'].default_value = 0.4
+bsdf_s.inputs['Base Color'].default_value = (0.04, 0.28, 0.08, 1.0)
+bsdf_s.inputs['Roughness'].default_value = 0.35
+bsdf_s.inputs['Subsurface Weight'].default_value = 0.2
 
+# 3. خامة قطرات الندى المائية (Water Dew Drop)
+mat_dew = bpy.data.materials.new(name="Rose_DewDrop")
+mat_dew.use_nodes = True
+bsdf_d = mat_dew.node_tree.nodes.get("Principled BSDF")
+bsdf_d.inputs['Base Color'].default_value = (1.0, 1.0, 1.0, 1.0)
+bsdf_d.inputs['Roughness'].default_value = 0.02
+bsdf_d.inputs['Transmission Weight'].default_value = 1.0
+bsdf_d.inputs['Specular IOR Level'].default_value = 0.9
+
+# 4. خامة المزهرية الزجاجية الكريستالية
 mat_vase = bpy.data.materials.new(name="Glass_Vase")
 mat_vase.use_nodes = True
 bsdf_v = mat_vase.node_tree.nodes.get("Principled BSDF")
-bsdf_v.inputs['Base Color'].default_value = (0.9, 0.95, 1.0, 1.0)
-bsdf_v.inputs['Roughness'].default_value = 0.05
-bsdf_v.inputs['Transmission Weight'].default_value = 0.95
+bsdf_v.inputs['Base Color'].default_value = (0.95, 0.98, 1.0, 1.0)
+bsdf_v.inputs['Roughness'].default_value = 0.04
+bsdf_v.inputs['Transmission Weight'].default_value = 0.96
 
-# 1. المزهرية الزجاجية
-bpy.ops.mesh.primitive_cylinder_add(radius=0.45, depth=1.3, location=(0, 0, 0.65))
+# [1] المزهرية الزجاجية وقرص الماء
+bpy.ops.mesh.primitive_cylinder_add(radius=0.48, depth=1.35, location=(0, 0, 0.68))
 vase = bpy.context.active_object
 vase.name = "GlassVase"
 vase.data.materials.append(mat_vase)
 
-# 2. ماء داخل المزهرية
-bpy.ops.mesh.primitive_cylinder_add(radius=0.42, depth=0.9, location=(0, 0, 0.5))
+bpy.ops.mesh.primitive_cylinder_add(radius=0.45, depth=0.9, location=(0, 0, 0.52))
 water = bpy.context.active_object
 water.name = "VaseWater"
 water.data.materials.append(mat_vase)
 
-# 3. ساق الوردة
-bpy.ops.mesh.primitive_cylinder_add(radius=0.03, depth=2.0, location=(0, 0, 1.4))
+# [2] ساق الوردة الشوكية الرشيقة
+bpy.ops.mesh.primitive_cylinder_add(radius=0.035, depth=2.2, location=(0, 0, 1.45))
 stem = bpy.context.active_object
 stem.name = "RoseStem"
 stem.data.materials.append(mat_stem)
 
-# 4. أوراق الساق
-for x_off, z_off, rot in [(0.25, 1.1, 0.35), (-0.25, 1.4, -0.35)]:
-    bpy.ops.mesh.primitive_uv_sphere_add(radius=0.25, location=(x_off, 0, z_off))
+# أشواك الساق الصغيرة (Thorns)
+for thorn_z, thorn_rot in [(1.05, 0.8), (1.35, -1.2), (1.65, 2.1)]:
+    bpy.ops.mesh.primitive_cone_add(radius1=0.015, depth=0.06, location=(0.04 * math.cos(thorn_rot), 0.04 * math.sin(thorn_rot), thorn_z), rotation=(0, math.radians(70), thorn_rot))
+    bpy.context.active_object.name = "Thorn"
+    bpy.context.active_object.data.materials.append(mat_stem)
+
+# [3] أوراق الساق النباتية المسننة
+for lx, ly, lz, rot in [(0.28, 0.1, 1.25, 0.45), (-0.28, -0.1, 1.55, -0.45)]:
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=0.28, location=(lx, ly, lz))
     leaf = bpy.context.active_object
-    leaf.scale = (1.4, 0.08, 0.5)
-    leaf.rotation_euler = (0, 0, rot)
+    leaf.name = "Leaf"
+    leaf.scale = (1.5, 0.06, 0.55)
+    leaf.rotation_euler = (math.radians(15), math.radians(20), rot)
     leaf.data.materials.append(mat_stem)
 
-# 5. بتلات الوردة الحلزونية (Fibonacci)
-for i in range(22):
-    phi = i * 137.5 * (math.pi / 180.0)
-    r = 0.06 + (i * 0.014)
-    z = 2.3 + (i * 0.012)
-    bpy.ops.mesh.primitive_uv_sphere_add(radius=0.26 + (i * 0.008), location=(math.cos(phi)*r, math.sin(phi)*r, z))
+# [4] كأس الوردة والسبلات الخضراء (Calyx & Sepals)
+bpy.ops.mesh.primitive_cone_add(radius1=0.18, radius2=0.04, depth=0.22, location=(0, 0, 2.38))
+calyx = bpy.context.active_object
+calyx.name = "Calyx"
+calyx.data.materials.append(mat_stem)
+
+for s_i in range(5):
+    s_angle = s_i * (2 * math.pi / 5)
+    bpy.ops.mesh.primitive_cone_add(radius1=0.045, depth=0.32, location=(0.14 * math.cos(s_angle), 0.14 * math.sin(s_angle), 2.45), rotation=(math.radians(35) * math.sin(s_angle), -math.radians(35) * math.cos(s_angle), s_angle))
+    sepal = bpy.context.active_object
+    sepal.name = f"Sepal_{s_i+1}"
+    sepal.data.materials.append(mat_stem)
+
+# [5] بنية البتلات الحلزونية الذهبية (Fibonacci Spiral - 28 Petals)
+for i in range(28):
+    prog = i / 27.0
+    phi = i * 137.508 * (math.pi / 180.0)
+    
+    r = 0.03 + (0.34 * math.pow(prog, 0.85))
+    z = 2.48 + (0.28 * math.pow(1.0 - prog, 0.7))
+    
+    sx = 0.22 + (0.58 * math.pow(prog, 0.75))
+    sy = 0.32 + (0.65 * math.pow(prog, 0.75))
+    sz = 0.04 + (0.07 * prog)
+    
+    tilt = math.radians(12 + (68 * math.pow(prog, 1.2)))
+    
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=0.45, location=(r * math.cos(phi), r * math.sin(phi), z))
     petal = bpy.context.active_object
     petal.name = f"Petal_{i+1:02d}"
-    petal.scale = (0.75, 1.1, 0.22)
-    petal.rotation_euler = (0.35 + (i * 0.02), 0, phi + math.pi/2)
+    petal.scale = (sx, sy, sz)
+    petal.rotation_euler = (tilt * math.sin(phi), -tilt * math.cos(phi), phi + math.radians(90))
     petal.data.materials.append(mat_petal)
 
+# [6] قطرات الندى المائية الفيزيائية (Dew Drops) المتناثرة على البتلات
+dew_coords = [
+    (0.24, 0.18, 2.65, 0.024),
+    (-0.28, 0.12, 2.58, 0.028),
+    (0.12, -0.32, 2.54, 0.022),
+    (-0.16, -0.26, 2.62, 0.025),
+    (0.32, -0.15, 2.51, 0.026),
+    (0.02, 0.36, 2.52, 0.022)
+]
+for d_x, d_y, d_z, d_r in dew_coords:
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=d_r, location=(d_x, d_y, d_z))
+    dew = bpy.context.active_object
+    dew.name = "DewDrop"
+    dew.data.materials.append(mat_dew)
+
+# تنعيم كافة الأسطح
 for obj in bpy.data.objects:
     if obj.type == 'MESH':
         for poly in obj.data.polygons:
             poly.use_smooth = True
 
-print("✅ تم بناء الوردة الجورية في بلندر بنجاح!")
+print("✅ تم بناء الوردة الجورية المخملية فائقة الواقعية في بلندر!")
 `
         };
     }
