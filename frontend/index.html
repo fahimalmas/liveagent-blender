@@ -64,10 +64,7 @@
                                     <span class="suggestion-title">جرّب أحد الأوامر التالية:</span>
                                     <div class="suggestions-list">
                                         <button class="chip" onclick="sendQuickPrompt('صمم لي وردة جورية حمراء واقعية في مزهرية')">🌹 صمم وردة جورية واقعية</button>
-                                        <button class="chip" onclick="sendQuickPrompt('صمم كرسي قيمنق عالي الظهر')">🪑 صمم كرسي قيمنق رياضي</button>
                                         <button class="chip" onclick="sendQuickPrompt('صمم لي نظارة شمسية عصرية بإطار أسود وعدسات زجاجية عاكسة')">🕶️ نظارة شمسية عصرية</button>
-                                        <button class="chip" onclick="sendQuickPrompt('أضف إضاءة استوديو احترافية ثلاثية النقاط للمشهد')">💡 إضاءة استوديو احترافية</button>
-                                        <button class="chip" onclick="sendQuickPrompt('نظف المشهد بالكامل وابدأ من الصفر')">🧹 تنظيف المشهد</button>
                                     </div>
                                 </div>
                             </div>
@@ -98,10 +95,6 @@
                     <button class="tab-btn active" data-tab="viewportTab">
                         <span class="tab-icon">👁️</span>
                         معاينة ثلاثية الأبعاد حية (3D Viewport)
-                    </button>
-                    <button class="tab-btn" data-tab="codeTab">
-                        <span class="tab-icon">💻</span>
-                        كود بايثون بلندر (bpy Script)
                     </button>
                     <button class="tab-btn" data-tab="bridgeTab">
                         <span class="tab-icon">🔌</span>
@@ -173,8 +166,8 @@
                     </div>
                 </div>
 
-                <!-- تبويب كود بايثون المتولد -->
-                <div class="tab-content" id="codeTab">
+                <!-- تبويب كود بايثون المتولد (مخفي تحت الكواليس لحفظ الكود دون التأثير على الشاشة) -->
+                <div class="tab-content" id="codeTab" style="display: none !important;">
                     <div class="code-editor-wrapper">
                         <div class="code-toolbar">
                             <span class="lang-tag">Python (bpy)</span>
@@ -313,6 +306,6 @@ def setup_scene():
         </div>
     </div>
 
-    <script src="app.js?v=20260907_v30"></script>
+    <script src="app.js?v=20260907_v31"></script>
 </body>
 </html>
